@@ -5,6 +5,7 @@ from functools import lru_cache
 from nexus import NexusWriter, NexusReader
 
 from .CognateParser import CognateParser
+from .tools import slugify
 
 class Record(object):
     def __init__(self,
@@ -100,14 +101,15 @@ class NexusMaker(object):
             else:
                 assert len(self.cognates[cog]) >= 1, "%s = %r" % (cog, self.cognates[cog])
             
-            coglabel = "_".join(cog)
+            coglabel = slugify("_".join(cog))
             for lang in self.languages:
+                taxon = slugify(lang)
                 if lang in self.cognates[cog]:
-                    nex.add(lang, coglabel, '1')
+                    nex.add(taxon, coglabel, '1')
                 elif self._is_missing_for_word(lang, cog[0]):
-                    nex.add(lang, coglabel, '?')
+                    nex.add(taxon, coglabel, '?')
                 else:
-                    nex.add(lang, coglabel, '0')
+                    nex.add(taxon, coglabel, '0')
         
         nex = self._add_ascertainment(nex)  # handle ascertainment
         return nex
