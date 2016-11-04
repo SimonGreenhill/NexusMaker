@@ -5,28 +5,31 @@ from nexus import NexusWriter, NexusReader
 
 from .CognateParser import CognateParser
 
-ASCERTAINMENT_CHOICES = (
-    'none',
-    'overall',
-    'perword',
-)
-
 class Record(object):
-    def __init__(self, language=None, word=None, item=None, annotation=None, loan=None, cognate=None):
-        self.language = language
-        self.word = word
-        self.item = item
-        self.annotation = annotation
-        self.loan = loan
-        self.cognate = cognate
+    def __init__(self,
+        ID=None, LID=None, WID=None, Language=None, Word=None, Item=None,
+        Annotation=None, Loan=None, Cognacy=None
+    ):
+        self.ID = ID
+        self.LID = LID
+        self.WID = WID
+        self.Language = Language
+        self.Word = Word
+        self.Item = Item
+        self.Annotation = Annotation
+        self.Loan = Loan
+        self.Cognacy = Cognacy
+    
+    def __repr__(self):
+        return "<Record %s - %s - %s - %s>" % (self.ID, self.Language, self.Word, self.Item)
     
     @property
     def is_loan(self):
-        if self.loan is None:
+        if self.Loan is None:
             return False
-        elif self.loan in (False, ""):
+        elif self.Loan in (False, ""):
             return False
-        elif self.loan is True:
+        elif self.Loan is True:
             return True
         else:
             return True
@@ -47,9 +50,11 @@ class NexusMaker(object):
             self.data = [r for r in data if not r.is_loan]
         
     def _check(self, record):
-        """Checks that all records are instances of `Record`"""
-        if not isinstance(record, Record):
-            raise ValueError('records must be of type Record')
+        """Checks that all records have the keys we need"""
+        if getattr(record, 'Language', None) is None:
+            raise ValueError("record has no `Language` %r" % record)
+        if getattr(record, 'Word', None) is None:
+            raise ValueError("record has no `Word` %r" % record)
         return record
     
     def _is_missing_for_word(self, language, word):
@@ -62,13 +67,13 @@ class NexusMaker(object):
     @property
     def languages(self):
         if not hasattr(self, '_languages'):
-            self._languages = {r.language for r in self.data}
+            self._languages = {r.Language for r in self.data}
         return self._languages
         
     @property
     def words(self):
         if not hasattr(self, '_words'):
-            self._words = {r.word for r in self.data}
+            self._words = {r.Word for r in self.data}
         return self._words
     
     @property
@@ -79,10 +84,10 @@ class NexusMaker(object):
                 if self.remove_loans and rec.is_loan:
                     raise ValueError("%r is a loan word!")
                 
-                for cog in self.cogparser.parse_cognate(rec.cognate):
-                    coglabel = (rec.word, cog)
+                for cog in self.cogparser.parse_cognate(rec.Cognacy):
+                    coglabel = (rec.Word, cog)
                     self._cognates[coglabel] = self._cognates.get(coglabel, set())
-                    self._cognates[coglabel].add(rec.language)
+                    self._cognates[coglabel].add(rec.Language)
         return self._cognates
     
     def make(self):
