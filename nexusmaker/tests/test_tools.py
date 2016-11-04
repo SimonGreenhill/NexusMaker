@@ -13,9 +13,6 @@ class Test_Slugify(unittest.TestCase):
     def test_brackets(self):
         self.assertEqual(slugify('Banggai (W.dialect)'), 'Banggai_Wdialect')
 
-    def test_square_brackets(self):
-        self.assertEqual(slugify('Buru [Namrole Bay]'), 'Buru')
-
     def test_dash(self):
         self.assertEqual(slugify('Aklanon - Bisayan'), 'Aklanon_Bisayan')
 
@@ -27,7 +24,7 @@ class Test_Slugify(unittest.TestCase):
         self.assertEqual(slugify('Kakiduge:n Ilongot'), 'Kakidugen_Ilongot')
 
     def test_slash(self):
-        self.assertEqual(slugify('Angkola / Mandailin'), 'Angkola')
+        self.assertEqual(slugify('Angkola / Mandailin'), 'Angkola_Mandailin')
     
     def test_apostrophe(self):
         self.assertEqual(slugify('V’ënen Taut'), 'Venen_Taut')

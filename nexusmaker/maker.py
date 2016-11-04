@@ -39,8 +39,6 @@ class Record(object):
 
 class NexusMaker(object):
     
-    UNIQUE_IDENTIFIER = "u_"
-    
     def __init__(self, data, cogparser=CognateParser(strict=True, uniques=True), remove_loans=True):
         self.data = [self._check(r) for r in data]
         
@@ -82,12 +80,18 @@ class NexusMaker(object):
     @property
     def cognates(self):
         if not hasattr(self, '_cognates'):
-            self._cognates = {}
+            self._cognates, self._uniques = {}, set()
             for rec in self.data:
                 if self.remove_loans and rec.is_loan:
                     raise ValueError("%r is a loan word!")
                 
                 for cog in self.cogparser.parse_cognate(rec.Cognacy):
+                    # don't add multiple uniques for each language-word combination
+                    if self.cogparser.UNIQUE_IDENTIFIER in cog:
+                        if (rec.Language, rec.Word) in self._uniques:
+                            continue
+                        self._uniques.add((rec.Language, rec.Word))
+                    # add cognate
                     coglabel = (rec.Word, cog)
                     self._cognates[coglabel] = self._cognates.get(coglabel, set())
                     self._cognates[coglabel].add(rec.Language)
@@ -96,27 +100,30 @@ class NexusMaker(object):
     def make(self):
         nex = NexusWriter()
         for cog in self.cognates:
-            if self.UNIQUE_IDENTIFIER in cog:
+            if self.cogparser.UNIQUE_IDENTIFIER in cog:
                 assert len(self.cognates[cog]) == 1
             else:
                 assert len(self.cognates[cog]) >= 1, "%s = %r" % (cog, self.cognates[cog])
             
-            coglabel = slugify("_".join(cog))
             for lang in self.languages:
-                taxon = slugify(lang)
                 if lang in self.cognates[cog]:
-                    nex.add(taxon, coglabel, '1')
+                    value = '1'
                 elif self._is_missing_for_word(lang, cog[0]):
-                    nex.add(taxon, coglabel, '?')
+                    value = '?'
                 else:
-                    nex.add(taxon, coglabel, '0')
-        
+                    value = '0'
+                nex.add(slugify(lang), slugify("_".join(cog)), value)
+                
         nex = self._add_ascertainment(nex)  # handle ascertainment
         return nex
     
     def _add_ascertainment(self, nex):
         # subclass this to extend
         return nex
+    
+    def display_cognates(self):  # pragma: no cover
+        for cog in sorted(self.cognates):
+            print(cog, sorted(self.cognates[cog]))
     
     def write(self, nex=None, filename=None):
         if nex is None:

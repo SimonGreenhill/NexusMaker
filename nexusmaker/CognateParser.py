@@ -1,7 +1,8 @@
 
-
-
 class CognateParser(object):
+    
+    UNIQUE_IDENTIFIER = "u_"
+    
     def __init__(self, strict=True, uniques=True):
         """
         Parses cognates. 
@@ -18,7 +19,7 @@ class CognateParser(object):
         if not self.uniques: 
             return []
         self.unique_id = self.unique_id + 1
-        return ["u_%d" % self.unique_id]
+        return ["%s%d" % (self.UNIQUE_IDENTIFIER, self.unique_id)]
     
     def parse_cognate(self, value):
         raw = value
