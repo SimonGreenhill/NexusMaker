@@ -80,6 +80,9 @@ class TestNexusMaker(unittest.TestCase):
         assert self.maker._is_missing_for_word('D', 'leg') == False
         assert self.maker._is_missing_for_word('D', 'arm') == False
 
+    def test_is_missing_for_word_cached(self):
+        assert hasattr(self.maker._is_missing_for_word, 'cache_info')  # lru_cache adds cache_info() to wrapper
+
     def test_eye_1(self):
         cog = 'eye_1'
         assert self.nex.data[cog]['A'] == '1'

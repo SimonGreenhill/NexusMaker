@@ -1,5 +1,6 @@
 import codecs
 from collections import defaultdict
+from functools import lru_cache
 
 from nexus import NexusWriter, NexusReader
 
@@ -37,7 +38,7 @@ class Record(object):
 
 class NexusMaker(object):
     
-    UNIQUE_IDENTIFIER = "-u_"
+    UNIQUE_IDENTIFIER = "u_"
     
     def __init__(self, data, cogparser=CognateParser(strict=True, uniques=True), remove_loans=True):
         self.data = [self._check(r) for r in data]
@@ -57,6 +58,7 @@ class NexusMaker(object):
             raise ValueError("record has no `Word` %r" % record)
         return record
     
+    @lru_cache(maxsize=None)
     def _is_missing_for_word(self, language, word):
         """Returns True if the given `language` has no cognates for `word`"""
         for cog in [c for c in self.cognates if c[0] == word]:
@@ -78,7 +80,7 @@ class NexusMaker(object):
     
     @property
     def cognates(self):
-        if not hasattr(self, '_words'):
+        if not hasattr(self, '_cognates'):
             self._cognates = {}
             for rec in self.data:
                 if self.remove_loans and rec.is_loan:
