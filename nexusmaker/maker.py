@@ -44,6 +44,8 @@ class NexusMaker(object):
         
         if cogparser is None:
             self.cogparser = CognateParser(strict=True, uniques=True)
+        else:
+            self.cogparser = cogparser
         
         # loan words
         self.remove_loans = remove_loans
