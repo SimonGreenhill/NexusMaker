@@ -37,7 +37,25 @@ class TestNexusMakerInternals(unittest.TestCase):
             NexusMaker([
                 Record(Language="French", Item="", Cognacy="2")  # no word
             ])
-
+    
+    def test_error_on_cognates_with_loans(self):
+        """Test that we generate an error if a loan word enters .cognates()"""
+        n = NexusMaker(TESTDATA)
+        n.data.append(Record(Language="D", Word="eye", Item="", Cognacy="1", Loan=True))
+        with self.assertRaises(ValueError):
+            n.cognates
+    
+    def test_error_on_make_with_uniques_bigger_than_one(self):
+        """
+        Test that we generate an error in .make if a unique cognate set contains
+        more than one language.
+        """
+        n = NexusMaker(TESTDATA)
+        n.cognates
+        n.cognates['test_u_1'] = ["A", "B"]
+        with self.assertRaises(AssertionError):
+            n.make()
+        
 
 class TestNexusMaker(unittest.TestCase):
     model = NexusMaker
@@ -145,7 +163,10 @@ class TestNexusMakerAscertained(TestNexusMaker):
         for k in self.nex.data[self.maker.OVERALL_ASCERTAINMENT_LABEL]:
             assert self.nex.data[self.maker.OVERALL_ASCERTAINMENT_LABEL][k] == '0'
 
-
+    def test_error_on_multiple_ascertainment_sites(self):
+        with self.assertRaises(ValueError):
+            self.maker._add_ascertainment(self.nex)
+        
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,7 +1,7 @@
 import sys
 import unittest
 
-from nexusmaker import NexusMaker, Record
+from nexusmaker import NexusMaker, NexusMakerAscertained, NexusMakerAscertainedWords, Record
 
 RECORDS = """
 Aiwoo-501	132312	five	vili	1
@@ -71,8 +71,14 @@ EXPECTED_UNIQUES = [
 
 
 class TestNexusMaker(unittest.TestCase):
+    model = NexusMaker
+    # number of cognate sets expected
+    expected_ncog = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES)
+    # number of characters expected in the nexus file
+    expected_nchar = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES)
+    
     def setUp(self):
-        self.maker = NexusMaker(data=COMPLEX_TESTDATA)
+        self.maker = self.model(data=COMPLEX_TESTDATA)
         self.nex = self.maker.make()
 
     def test_languages(self):
@@ -84,10 +90,7 @@ class TestNexusMaker(unittest.TestCase):
         self.assertEqual(self.maker.words, {'hand', 'leg', 'five'})
     
     def test_ncognates(self):
-        self.assertEqual(
-            len(self.maker.cognates),
-            len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES)
-        )
+        self.assertEqual(len(self.maker.cognates), self.expected_ncog)
     
     def test_cognate_sets(self):
         errors = []
@@ -145,3 +148,32 @@ class TestNexusMaker(unittest.TestCase):
         
         if iaai != 1:
             raise AssertionError("Should only have one unique site for Iaai-471-five")
+    
+    def test_nexus_symbols(self):
+        assert sorted(self.nex.symbols) == sorted(['0', '1'])
+    
+    def test_nexus_taxa(self):
+        self.assertEqual(self.maker.languages, self.nex.taxa)
+    
+    def test_nexus_characters_expected_cognates(self):
+        for e in EXPECTED_COGNATES:
+            assert "_".join(e) in self.nex.characters
+    
+    def test_nexus_characters_expected_uniques(self):
+        uniques = [c for c in self.nex.characters if '_u_' in c]
+        assert len(uniques) == len(EXPECTED_UNIQUES)
+    
+    def test_nexus_nchar(self):
+        assert len(self.nex.characters) == self.expected_nchar
+
+
+class TestNexusMakerAscertained(TestNexusMaker):
+    model = NexusMakerAscertained
+    expected_nchar = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES) + 1
+
+
+class TestNexusMakerAscertainedWords(TestNexusMaker):
+    model = NexusMakerAscertainedWords
+    expected_nchar = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES) + 3
+
+

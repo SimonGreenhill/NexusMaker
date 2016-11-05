@@ -39,10 +39,11 @@ class Record(object):
 
 class NexusMaker(object):
     
-    def __init__(self, data, cogparser=CognateParser(strict=True, uniques=True), remove_loans=True):
+    def __init__(self, data, cogparser=None, remove_loans=True):
         self.data = [self._check(r) for r in data]
         
-        self.cogparser = cogparser
+        if cogparser is None:
+            self.cogparser = CognateParser(strict=True, uniques=True)
         
         # loan words
         self.remove_loans = remove_loans
@@ -101,7 +102,7 @@ class NexusMaker(object):
         nex = NexusWriter()
         for cog in self.cognates:
             if self.cogparser.UNIQUE_IDENTIFIER in cog:
-                assert len(self.cognates[cog]) == 1
+                assert len(self.cognates[cog]) == 1, "Cognate %s should be unique but has multiple members" % cog
             else:
                 assert len(self.cognates[cog]) >= 1, "%s = %r" % (cog, self.cognates[cog])
             
@@ -113,7 +114,6 @@ class NexusMaker(object):
                 else:
                     value = '0'
                 nex.add(slugify(lang), slugify("_".join(cog)), value)
-                
         nex = self._add_ascertainment(nex)  # handle ascertainment
         return nex
     
@@ -131,7 +131,7 @@ class NexusMaker(object):
         
         if filename is None:
             return nex.write(charblock=True)
-        else:
+        else:  # pragma: no cover
             return nex.write_to_file(filename=filename, charblock=True)
         
         
@@ -155,15 +155,15 @@ class NexusMakerAscertainedWords(NexusMaker):
     def _add_ascertainment(self, nex):
         """Adds an ascertainment character per word"""
         for word in self.words:
-            coglabel = '%s_0' % word
+            coglabel = slugify('%s_0' % word)
             if coglabel in nex.data:
                 raise ValueError('Duplicate ascertainment key %s!' % coglabel)
             
             for lang in self.languages:
                 if self._is_missing_for_word(lang, word):
-                    nex.add(lang, coglabel, '?')
+                    nex.add(slugify(lang), coglabel, '?')
                 else:
-                    nex.add(lang, coglabel, '0')
+                    nex.add(slugify(lang), coglabel, '0')
         return nex
     
     def _get_characters(self, nex, delimiter="_"):
