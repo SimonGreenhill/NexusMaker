@@ -163,7 +163,7 @@ class NexusMakerAscertainedWords(NexusMaker):
     def _add_ascertainment(self, nex):
         """Adds an ascertainment character per word"""
         for word in self.words:
-            coglabel = slugify('%s_0' % word)
+            coglabel = self.make_coglabel(word, '0')
             if coglabel in nex.data:
                 raise ValueError('Duplicate ascertainment key %s!' % coglabel)
             
