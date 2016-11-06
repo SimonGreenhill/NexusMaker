@@ -33,6 +33,11 @@ class TestCognateParser(unittest.TestCase):
         self.assertEqual(CognateParser(uniques=True).parse_cognate('X'), ['u_1'])
         self.assertEqual(CognateParser(uniques=True).parse_cognate('x'), ['u_1'])
 
+    def test_bad_entries_in_forms_uniques(self):
+        # coded as x
+        self.assertEqual(CognateParser(uniques=True).parse_cognate('X20'), ['u_1'])
+        self.assertEqual(CognateParser(uniques=True).parse_cognate('x20'), ['u_1'])
+
     def test_bad_entries_nouniques(self):
         self.assertEqual(CognateParser(uniques=False).parse_cognate('X'), [])
         self.assertEqual(CognateParser(uniques=False).parse_cognate('x'), [])

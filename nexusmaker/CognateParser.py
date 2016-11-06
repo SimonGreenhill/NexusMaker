@@ -27,9 +27,9 @@ class CognateParser(object):
             return self.get_next_unique()
         elif value == '':
             return self.get_next_unique()
-        elif str(value).lower() == 's': # error
+        elif str(value).lower() == 's':  # error
             return self.get_next_unique()
-        elif str(value).lower() == 'x': # error
+        elif 'x' in str(value).lower():  # error
             return self.get_next_unique()
         elif isinstance(value, str):
             if value.startswith(","):
