@@ -5,7 +5,7 @@ from functools import lru_cache
 from nexus import NexusWriter, NexusReader
 
 from .CognateParser import CognateParser
-from .tools import slugify
+from .tools import slugify, parse_word
 
 class Record(object):
     def __init__(self,
@@ -100,6 +100,12 @@ class NexusMaker(object):
                     self._cognates[coglabel].add(rec.Language)
         return self._cognates
     
+    def make_coglabel(self, word, cog):
+        return "%s_%s" % (
+            slugify(word.lower().replace(" ", "").replace("_", "")),
+            cog
+        )
+    
     def make(self):
         nex = NexusWriter()
         for cog in self.cognates:
@@ -115,7 +121,7 @@ class NexusMaker(object):
                     value = '?'
                 else:
                     value = '0'
-                nex.add(slugify(lang), slugify("_".join(cog)), value)
+                nex.add(slugify(lang), self.make_coglabel(*cog), value)
         nex = self._add_ascertainment(nex)  # handle ascertainment
         return nex
     
@@ -172,10 +178,7 @@ class NexusMakerAscertainedWords(NexusMaker):
         """Find all characters"""
         chars = defaultdict(list)
         for site_id, label in enumerate(sorted(nex.data.keys())):
-            if delimiter in label:
-                word, cogid = label.rsplit(delimiter, 1)
-            else:
-                raise ValueError("No delimiter %s in %s" % (delimiter, label))
+            word, cogid = parse_word(label, delimiter)
             chars[word].append(site_id)
         return chars
 
