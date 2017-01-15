@@ -7,6 +7,7 @@ from nexus import NexusWriter, NexusReader
 from .CognateParser import CognateParser
 from .tools import slugify, parse_word
 
+
 class Record(object):
     def __init__(self,
         ID=None, LID=None, WID=None, Language=None, Word=None, Item=None,
@@ -36,6 +37,12 @@ class Record(object):
         else:
             return True
     
+    def get_taxon(self):
+        if self.LID is None:
+            return self.Language
+        else:
+            return "%s_%d" % (self.Language, self.LID)
+            
 
 class NexusMaker(object):
     
@@ -63,15 +70,15 @@ class NexusMaker(object):
     @lru_cache(maxsize=None)
     def _is_missing_for_word(self, language, word):
         """Returns True if the given `language` has no cognates for `word`"""
-        for cog in [c for c in self.cognates if c[0] == word]:
-            if language in self.cognates[cog]:
-                return False
-        return True
+        cogs = [
+            c for c in self._cognates if c[0] == word and language in self._cognates[c]
+        ]
+        return len(cogs) == 0
         
     @property
     def languages(self):
         if not hasattr(self, '_languages'):
-            self._languages = {r.Language for r in self.data}
+            self._languages = {r.get_taxon() for r in self.data}
         return self._languages
         
     @property
@@ -83,21 +90,36 @@ class NexusMaker(object):
     @property
     def cognates(self):
         if not hasattr(self, '_cognates'):
-            self._cognates, self._uniques = {}, set()
+            self._cognates = {}  # cognate sets
+            self._uniques = {}  # unique sets (language, word)
+
             for rec in self.data:
                 if self.remove_loans and rec.is_loan:
                     raise ValueError("%r is a loan word!")
                 
                 for cog in self.cogparser.parse_cognate(rec.Cognacy):
-                    # don't add multiple uniques for each language-word combination
-                    if self.cogparser.UNIQUE_IDENTIFIER in cog:
-                        if (rec.Language, rec.Word) in self._uniques:
-                            continue
-                        self._uniques.add((rec.Language, rec.Word))
-                    # add cognate
-                    coglabel = (rec.Word, cog)
-                    self._cognates[coglabel] = self._cognates.get(coglabel, set())
-                    self._cognates[coglabel].add(rec.Language)
+                    if self.cogparser.is_unique_cognateset(cog):
+                        self._uniques[(rec.get_taxon(), rec.Word)] = cog
+                    else:
+                        # add cognate
+                        coglabel = (rec.Word, cog)
+                        self._cognates[coglabel] = self._cognates.get(coglabel, set())
+                        self._cognates[coglabel].add(rec.get_taxon())
+        
+            # now handle special casing of uniques.
+            # 1. If the language already has an entry for W that is cognate, then do nothing 
+            # (i.e. we # have identified the cognate forms, the new form is something else, 
+            # but we don’t care).
+            #
+            # 2. If none of the forms are cognate for that word W then the language is assigned ONE
+            # unique cognate set regardless of how many records there are in the database for that 
+            # word in that language, i.e. we know it’s evolved a new cognate set, and it could be any
+            # one of the other forms, but we don’t care which form.
+            for (lang, word) in self._uniques:
+                cog = self._uniques[(lang, word)]
+                if self._is_missing_for_word(lang, word):  # add unique
+                    assert (word, cog) not in self._cognates
+                    self._cognates[(word, cog)] = set([lang])
         return self._cognates
     
     def make_coglabel(self, word, cog):
@@ -109,8 +131,8 @@ class NexusMaker(object):
     def make(self):
         nex = NexusWriter()
         for cog in self.cognates:
-            if self.cogparser.UNIQUE_IDENTIFIER in cog:
-                assert len(self.cognates[cog]) == 1, "Cognate %s should be unique but has multiple members" % cog
+            if self.cogparser.is_unique_cognateset(cog[1]):
+                assert len(self.cognates[cog]) == 1, "Cognate (%s, %s) should be unique but has multiple members" % cog
             else:
                 assert len(self.cognates[cog]) >= 1, "%s = %r" % (cog, self.cognates[cog])
             
@@ -121,6 +143,7 @@ class NexusMaker(object):
                     value = '?'
                 else:
                     value = '0'
+                
                 nex.add(slugify(lang), self.make_coglabel(*cog), value)
         nex = self._add_ascertainment(nex)  # handle ascertainment
         return nex

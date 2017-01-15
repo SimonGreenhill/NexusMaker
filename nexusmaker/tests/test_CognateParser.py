@@ -54,6 +54,12 @@ class TestCognateParser(unittest.TestCase):
         with self.assertRaises(ValueError):
             CognateParser(uniques=False).parse_cognate(',,')
     
+    def test_is_unique_cognateset(self):
+        self.assertEqual(CognateParser().is_unique_cognateset('u_1'), True)
+        self.assertEqual(CognateParser().is_unique_cognateset('u_1', labelled=False), True)
+        self.assertEqual(CognateParser().is_unique_cognateset('hand_u_1', labelled=False), False)
+        self.assertEqual(CognateParser().is_unique_cognateset('hand_u_1', labelled=True), True)
+    
     def test_add_unique(self):
         CP = CognateParser()
         self.assertEqual(CP.parse_cognate(''), ['u_1'])
@@ -189,9 +195,3 @@ class TestCognateParser(unittest.TestCase):
     def test_complicated_with_slash(self):
         CP = CognateParser(strict=True, uniques=True)
         self.assertEqual(CP.parse_cognate('53/54'), ['53', '54'])
-        
-        
-if __name__ == '__main__':
-    unittest.main()
-
-

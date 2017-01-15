@@ -12,9 +12,14 @@ class CognateParser(object):
         """
         self.uniques = uniques
         self.strict = strict
-        
         self.unique_id = 0
-        
+    
+    def is_unique_cognateset(self, cog, labelled=False):
+        if not labelled:
+            return str(cog).startswith(self.UNIQUE_IDENTIFIER)
+        else:
+            return "_%s" % self.UNIQUE_IDENTIFIER in str(cog)
+            
     def get_next_unique(self):
         if not self.uniques: 
             return []

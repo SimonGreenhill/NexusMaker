@@ -83,8 +83,3 @@ class TestNexusMakerAscertainedWords(TestNexusMaker):
         assert 'charset arm' in out
         assert 'charset eye' in out
         assert 'charset leg' in out
-
-if __name__ == '__main__':
-    unittest.main()
-
-

@@ -74,7 +74,3 @@ class TestParseWord(unittest.TestCase):
         with self.assertRaises(ValueError):
             parse_word("hand")
 
-
-if __name__ == '__main__':
-    unittest.main()
-

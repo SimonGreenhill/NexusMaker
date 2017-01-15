@@ -24,8 +24,9 @@ class TestRecord(unittest.TestCase):
         assert Record(Loan="English").is_loan
         assert Record(Loan=True).is_loan
     
+    def test_get_token(self):
+        r = Record(ID=1, WID=2, LID=3, Language='English', Word='Hand', Item='hand', Annotation='?', Cognacy=None, Loan="L")
+        assert r.get_taxon() == "English_3"
+        r = Record(ID=1, WID=2, LID=None, Language='English', Word='Hand', Item='hand', Annotation='?', Cognacy=None, Loan="L")
+        assert r.get_taxon() == "English"
         
-if __name__ == '__main__':
-    unittest.main()
-
-

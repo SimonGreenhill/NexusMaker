@@ -52,7 +52,7 @@ class TestNexusMakerInternals(unittest.TestCase):
         """
         n = NexusMaker(TESTDATA)
         n.cognates
-        n.cognates['test_u_1'] = ["A", "B"]
+        n._cognates[('test', 'u_1')] = ["A", "B"]
         with self.assertRaises(AssertionError):
             n.make()
         
@@ -166,9 +166,3 @@ class TestNexusMakerAscertained(TestNexusMaker):
     def test_error_on_multiple_ascertainment_sites(self):
         with self.assertRaises(ValueError):
             self.maker._add_ascertainment(self.nex)
-        
-
-if __name__ == '__main__':
-    unittest.main()
-
-
