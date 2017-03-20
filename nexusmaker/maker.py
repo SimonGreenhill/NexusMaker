@@ -174,10 +174,10 @@ class NexusMakerAscertained(NexusMaker):
     def _add_ascertainment(self, nex):
         """Adds an overall ascertainment character"""
         if self.OVERALL_ASCERTAINMENT_LABEL in nex.data:
-            raise ValueError('Duplicate ascertainment key %s!' % self.OVERALL_ASCERTAINMENT_LABEL)
+            raise ValueError('Duplicate ascertainment key "%s"!' % self.OVERALL_ASCERTAINMENT_LABEL)
             
         for lang in self.languages:
-            nex.add(lang, self.OVERALL_ASCERTAINMENT_LABEL, '0')
+            nex.add(lang, self.OVERALL_ASCERTAINMENT_LABEL, '0_ascertained')
         return nex
 
 
@@ -186,9 +186,9 @@ class NexusMakerAscertainedWords(NexusMaker):
     def _add_ascertainment(self, nex):
         """Adds an ascertainment character per word"""
         for word in self.words:
-            coglabel = self.make_coglabel(word, '0')
+            coglabel = self.make_coglabel(word, '0_ascertained')
             if coglabel in nex.data:
-                raise ValueError('Duplicate ascertainment key %s!' % coglabel)
+                raise ValueError('Duplicate ascertainment key "%s"!' % coglabel)
             
             for lang in self.languages:
                 if self._is_missing_for_word(lang, word):
