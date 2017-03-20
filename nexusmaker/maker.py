@@ -115,7 +115,7 @@ class NexusMaker(object):
             # unique cognate set regardless of how many records there are in the database for that 
             # word in that language, i.e. we know it’s evolved a new cognate set, and it could be any
             # one of the other forms, but we don’t care which form.
-            for (lang, word) in self._uniques:
+            for (lang, word) in sorted(self._uniques):
                 cog = self._uniques[(lang, word)]
                 if self._is_missing_for_word(lang, word):  # add unique
                     assert (word, cog) not in self._cognates
@@ -130,7 +130,7 @@ class NexusMaker(object):
     
     def make(self):
         nex = NexusWriter()
-        for cog in self.cognates:
+        for cog in sorted(self.cognates):
             if self.cogparser.is_unique_cognateset(cog[1]):
                 assert len(self.cognates[cog]) == 1, "Cognate (%s, %s) should be unique but has multiple members" % cog
             else:
