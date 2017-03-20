@@ -74,12 +74,12 @@ class TestNexusMaker(unittest.TestCase):
         assert len(self.nex.data.keys()) == 6
 
     def test_cognate_sets(self):
-        assert ('eye', '1') in self.maker.cognates.keys()
-        assert ('leg', '1') in self.maker.cognates.keys()
-        assert ('leg', '2') in self.maker.cognates.keys()
-        assert ('arm', '1') in self.maker.cognates.keys()
-        assert ('arm', '2') in self.maker.cognates.keys()
-        assert ('arm', '3') in self.maker.cognates.keys()
+        assert ('eye', '1') in self.maker.cognates
+        assert ('leg', '1') in self.maker.cognates
+        assert ('leg', '2') in self.maker.cognates
+        assert ('arm', '1') in self.maker.cognates
+        assert ('arm', '2') in self.maker.cognates
+        assert ('arm', '3') in self.maker.cognates
 
     def test_is_missing_for_word(self):
         assert self.maker._is_missing_for_word('A', 'eye') == False
@@ -97,9 +97,6 @@ class TestNexusMaker(unittest.TestCase):
         assert self.maker._is_missing_for_word('D', 'eye') == True, "Should be missing 'eye' for Language 'D' (loan)"
         assert self.maker._is_missing_for_word('D', 'leg') == False
         assert self.maker._is_missing_for_word('D', 'arm') == False
-
-    def test_is_missing_for_word_cached(self):
-        assert hasattr(self.maker._is_missing_for_word, 'cache_info')  # lru_cache adds cache_info() to wrapper
 
     def test_eye_1(self):
         cog = 'eye_1'

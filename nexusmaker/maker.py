@@ -1,18 +1,14 @@
-import codecs
 from collections import defaultdict
-from functools import lru_cache
 
-from nexus import NexusWriter, NexusReader
+from nexus import NexusWriter
 
 from .CognateParser import CognateParser
 from .tools import slugify, parse_word
 
 
 class Record(object):
-    def __init__(self,
-        ID=None, LID=None, WID=None, Language=None, Word=None, Item=None,
-        Annotation=None, Loan=None, Cognacy=None
-    ):
+    def __init__(self, ID=None, LID=None, WID=None, Language=None, Word=None,
+        Item=None, Annotation=None, Loan=None, Cognacy=None):
         self.ID = ID
         self.LID = LID
         self.WID = WID
@@ -24,7 +20,9 @@ class Record(object):
         self.Cognacy = Cognacy
     
     def __repr__(self):
-        return "<Record %s - %s - %s - %s>" % (self.ID, self.Language, self.Word, self.Item)
+        return "<Record %s - %s - %s - %s>" % (
+            self.ID, self.Language, self.Word, self.Item
+        )
     
     @property
     def is_loan(self):
@@ -67,7 +65,6 @@ class NexusMaker(object):
             raise ValueError("record has no `Word` %r" % record)
         return record
     
-    @lru_cache(maxsize=None)
     def _is_missing_for_word(self, language, word):
         """Returns True if the given `language` has no cognates for `word`"""
         cogs = [
@@ -218,7 +215,7 @@ class NexusMakerAscertainedWords(NexusMaker):
         for char in sorted(chars):
             siteids = sorted(chars[char])
             # increment by one as these are siteids not character positions
-            siteids = [s+1 for s in siteids]
+            siteids = [s + 1 for s in siteids]
             assert self._is_sequential(siteids), 'char is not sequential %s' % char
             if min(siteids) == max(siteids):
                 out = "\tcharset %s = %d;" % (char, min(siteids))

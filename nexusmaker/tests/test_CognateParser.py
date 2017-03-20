@@ -1,4 +1,3 @@
-import os
 import unittest
 
 from nexusmaker import CognateParser
@@ -56,9 +55,15 @@ class TestCognateParser(unittest.TestCase):
     
     def test_is_unique_cognateset(self):
         self.assertEqual(CognateParser().is_unique_cognateset('u_1'), True)
-        self.assertEqual(CognateParser().is_unique_cognateset('u_1', labelled=False), True)
-        self.assertEqual(CognateParser().is_unique_cognateset('hand_u_1', labelled=False), False)
-        self.assertEqual(CognateParser().is_unique_cognateset('hand_u_1', labelled=True), True)
+        self.assertEqual(
+            CognateParser().is_unique_cognateset('u_1', labelled=False), True
+        )
+        self.assertEqual(
+            CognateParser().is_unique_cognateset('hand_u_1', labelled=False), False
+        )
+        self.assertEqual(
+            CognateParser().is_unique_cognateset('hand_u_1', labelled=True), True
+        )
     
     def test_add_unique(self):
         CP = CognateParser()

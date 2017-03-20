@@ -1,7 +1,7 @@
-import sys
 import unittest
 
-from nexusmaker import NexusMaker, NexusMakerAscertained, NexusMakerAscertainedWords, Record
+from nexusmaker import Record, NexusMaker, NexusMakerAscertained
+from nexusmaker import NexusMakerAscertainedWords
 from nexusmaker import CognateParser
 
 RECORDS = """
@@ -45,11 +45,15 @@ def get(x, i):
 
 RECORDS = [r.split("\t") for r in RECORDS.split("\n") if len(r)]
 COMPLEX_TESTDATA = [
-    Record(Language=r[0], Word=r[2], Item=r[3], Cognacy=get(r, 4)) for r in RECORDS
+    Record(Language=r[0], Word=r[2], Item=r[3], Cognacy=get(r, 4))
+    for r in RECORDS
 ]
 
 EXPECTED_COGNATES = {
-    ('five', '1'): {'Aiwoo-501', 'Banoni-4', 'Dehu-196', 'Eton-1088', 'Hiw-639', 'Lamogai-67'},
+    ('five', '1'): {
+        'Aiwoo-501', 'Banoni-4', 'Dehu-196', 'Eton-1088', 'Hiw-639',
+        'Lamogai-67'
+    },
     ('leg', '86'): {'Aiwoo-501'},
     ('hand', '1'): {'Aiwoo-501', 'Banoni-4', 'Hiw-639'},
     ('hand', '64'): {'Banoni-4'},
@@ -85,7 +89,8 @@ class TestNexusMaker(unittest.TestCase):
 
     def test_languages(self):
         self.assertEqual(self.maker.languages, {
-            'Aiwoo-501', 'Banoni-4', 'Dehu-196', 'Eton-1088', 'Hiw-639', 'Iaai-471', 'Lamogai-67'
+            'Aiwoo-501', 'Banoni-4', 'Dehu-196', 'Eton-1088', 'Hiw-639',
+            'Iaai-471', 'Lamogai-67'
         })
 
     def test_words(self):
@@ -97,7 +102,7 @@ class TestNexusMaker(unittest.TestCase):
     def test_cognate_sets(self):
         errors = []
         for ecog in EXPECTED_COGNATES:
-            if not ecog in self.maker.cognates:
+            if ecog not in self.maker.cognates:
                 errors.append("Missing %s" % (ecog, ))
             elif self.maker.cognates.get(ecog, set()) != EXPECTED_COGNATES[ecog]:
                 errors.append("Cognate set %s incorrect %r != %r" % (
@@ -163,7 +168,8 @@ class TestNexusMaker(unittest.TestCase):
 
     def test_nexus_characters_expected_uniques(self):
         uniques = [
-            c for c in self.nex.characters if CognateParser().is_unique_cognateset(c, labelled=True)
+            c for c in self.nex.characters if
+            CognateParser().is_unique_cognateset(c, labelled=True)
         ]
         assert len(uniques) == len(EXPECTED_UNIQUES)
 
@@ -174,7 +180,8 @@ class TestNexusMaker(unittest.TestCase):
         hand = [c for c in self.nex.characters if c.startswith('hand_')]
         hand = [c for c in hand if CognateParser().is_unique_cognateset(c, labelled=True)]
         assert len(hand) == 1, 'Only expecting one unique character for hand'
-        assert self.nex.data['hand_u_2']['Iaai-471'] in ('0', '?'), 'Iaai-471 should not be unique for `hand`'
+        assert self.nex.data['hand_u_2']['Iaai-471'] in ('0', '?'), \
+            'Iaai-471 should not be unique for `hand`'
     
 
 class TestNexusMakerAscertained(TestNexusMaker):
