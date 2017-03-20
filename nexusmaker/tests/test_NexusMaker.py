@@ -152,16 +152,18 @@ class TestNexusMaker(unittest.TestCase):
 
 
 class TestNexusMakerAscertained(TestNexusMaker):
-    model = NexusMakerAscertained
+    def setUp(self):  # override parent method
+        self.maker = NexusMakerAscertained(data=TESTDATA)
+        self.nex = self.maker.make()
 
     # 1 more site than before in ascertainment = none
     def test_nsites(self):
         assert len(self.nex.data.keys()) == 7
 
     def test_ascertainment_column(self):
-        assert self.maker.OVERALL_ASCERTAINMENT_LABEL in self.nex.data
-        for k in self.nex.data[self.maker.OVERALL_ASCERTAINMENT_LABEL]:
-            assert self.nex.data[self.maker.OVERALL_ASCERTAINMENT_LABEL][k] == '0'
+        assert self.maker.ASCERTAINMENT_LABEL in self.nex.data
+        for k in self.nex.data[self.maker.ASCERTAINMENT_LABEL]:
+            assert self.nex.data[self.maker.ASCERTAINMENT_LABEL][k] == '0'
 
     def test_error_on_multiple_ascertainment_sites(self):
         with self.assertRaises(ValueError):
