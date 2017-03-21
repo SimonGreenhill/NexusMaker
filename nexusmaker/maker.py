@@ -128,11 +128,12 @@ class NexusMaker(object):
                     hascog.add((lang, word))
         return self._cognates
     
+    @lru_cache(maxsize=1024)
+    def make_slug(self, word):
+        return slugify(word.lower().replace(" ", "").replace("_", ""))
+        
     def make_coglabel(self, word, cog):
-        return "%s_%s" % (
-            slugify(word.lower().replace(" ", "").replace("_", "")),
-            cog
-        )
+        return "%s_%s" % (self.make_slug(word), cog)
     
     def make(self):
         nex = NexusWriter()
