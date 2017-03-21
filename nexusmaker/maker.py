@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from nexus import NexusWriter
+from functools import lru_cache
 
 from .CognateParser import CognateParser
 from .tools import slugify, parse_word
@@ -65,6 +66,7 @@ class NexusMaker(object):
             raise ValueError("record has no `Word` %r" % record)
         return record
     
+    @lru_cache(maxsize=None)
     def _is_missing_for_word(self, language, word):
         """Returns True if the given `language` has no cognates for `word`"""
         cogs = [
@@ -87,36 +89,43 @@ class NexusMaker(object):
     @property
     def cognates(self):
         if not hasattr(self, '_cognates'):
-            self._cognates = {}  # cognate sets
-            self._uniques = {}  # unique sets (language, word)
-
+            self._cognates = {}  # cognate sets (word, cogstate)
+            # unique sets (language, word)
+            uniques = {}
+            # set of (language, word) pairs where a language already has a
+            # cognate -- used for correct handling of uniques below.
+            hascog = set()
+            
             for rec in self.data:
                 if self.remove_loans and rec.is_loan:
                     raise ValueError("%r is a loan word!")
                 
                 for cog in self.cogparser.parse_cognate(rec.Cognacy):
                     if self.cogparser.is_unique_cognateset(cog):
-                        self._uniques[(rec.get_taxon(), rec.Word)] = cog
+                        uniques[(rec.get_taxon(), rec.Word)] = cog
                     else:
                         # add cognate
                         coglabel = (rec.Word, cog)
                         self._cognates[coglabel] = self._cognates.get(coglabel, set())
                         self._cognates[coglabel].add(rec.get_taxon())
-        
+                        hascog.add((rec.get_taxon(), rec.Word))
+                        
             # now handle special casing of uniques.
-            # 1. If the language already has an entry for W that is cognate, then do nothing 
-            # (i.e. we # have identified the cognate forms, the new form is something else, 
-            # but we don’t care).
-            #
-            # 2. If none of the forms are cognate for that word W then the language is assigned ONE
-            # unique cognate set regardless of how many records there are in the database for that 
-            # word in that language, i.e. we know it’s evolved a new cognate set, and it could be any
+            # 1. If the language already has an entry for W that is cognate,
+            # then do nothing (i.e. we have identified the cognate forms, 
+            # the new form is something else, but we don’t care).
+            # 
+            # 2. If none of the forms are cognate for that word W then the
+            # language is assigned ONE unique cognate set regardless of how many
+            # records there are in the database for that word in that language,
+            # i.e. we know it’s evolved a new cognate set, and it could be any
             # one of the other forms, but we don’t care which form.
-            for (lang, word) in sorted(self._uniques):
-                cog = self._uniques[(lang, word)]
-                if self._is_missing_for_word(lang, word):  # add unique
+            for (lang, word) in sorted(uniques):
+                if (lang, word) not in hascog:
+                    cog = uniques[(lang, word)]
                     assert (word, cog) not in self._cognates
                     self._cognates[(word, cog)] = set([lang])
+                    hascog.add((lang, word))
         return self._cognates
     
     def make_coglabel(self, word, cog):
