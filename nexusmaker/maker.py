@@ -8,18 +8,13 @@ from .tools import slugify, parse_word
 
 
 class Record(object):
-    def __init__(self, ID=None, LID=None, WID=None, Language=None, Word=None,
-        Item=None, Annotation=None, Loan=None, Cognacy=None):
-        self.ID = ID
-        self.LID = LID
-        self.WID = WID
-        self.Language = Language
-        self.Word = Word
-        self.Item = Item
-        self.Annotation = Annotation
-        self.Loan = Loan
-        self.Cognacy = Cognacy
-    
+    def __init__(self, **kwargs):
+        defaults = ['ID', 'LID', 'Language', 'WID', 'Word', 'Item', 'Loan', 'Cognacy']
+        for key in defaults:
+            setattr(self, key, None)
+        for key in kwargs:
+            setattr(self, key, kwargs[key])
+
     def __repr__(self):
         return "<Record %s - %s - %s - %s>" % (
             self.ID, self.Language, self.Word, self.Item

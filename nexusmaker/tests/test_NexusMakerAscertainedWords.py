@@ -37,8 +37,6 @@ class TestNexusMakerAscertainedWords(TestNexusMaker):
 
     def test_create_assumptions_simple(self):
         assumpt = self.maker.create_assumptions(self.nex)
-        print(self.nex.data)
-        print("\n".join(assumpt))
         assert 'begin assumptions' in assumpt[0]
         assert 'arm = 1-4' in assumpt[1]
         assert 'eye = 5-6' in assumpt[2]
