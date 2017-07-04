@@ -30,13 +30,13 @@ maker = NexusMaker(data)
 maker = NexusMakerAscertained(data)  # adds Ascertainment bias character
 
 maker = NexusMakerAscertainedWords(data)  # adds Ascertainment character per word
-
+nex = maker.make()
 maker.write(nex, filename="output.nex")
 
 
 ```
 
-** Version History: **
+### Version History:
 
 * 1.3: handle cognates of form '1a'
 * 1.2: initial release

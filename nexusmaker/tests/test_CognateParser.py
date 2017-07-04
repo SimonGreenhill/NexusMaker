@@ -205,3 +205,6 @@ class TestCognateParser(unittest.TestCase):
         self.assertEqual(CognateParser().parse_cognate('1a'), ['1', '1a'])
         self.assertEqual(CognateParser().parse_cognate('2b'), ['2', '2b'])
         self.assertEqual(CognateParser().parse_cognate('3az'), ['3', '3az'])
+        self.assertEqual(CognateParser().parse_cognate('45c'), ['45', '45c'])
+        self.assertEqual(CognateParser().parse_cognate('1a,2b'), ['1', '1a', '2', '2b'])
+        self.assertEqual(CognateParser().parse_cognate('1,2a,3b'), ['1', '2', '2a', '3', '3b'])
