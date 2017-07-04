@@ -1,3 +1,6 @@
+import re
+is_combined_cognate = re.compile(r"""(\d+)([a-z]+)""")
+
 
 class CognateParser(object):
 
@@ -19,13 +22,22 @@ class CognateParser(object):
             return str(cog).startswith(self.UNIQUE_IDENTIFIER)
         else:
             return "_%s" % self.UNIQUE_IDENTIFIER in str(cog)
-
+    
+    def _split_combined_cognate(self, cognate):
+        if is_combined_cognate.match(cognate):
+            return [
+                is_combined_cognate.findall(cognate)[0][0],
+                cognate
+            ]
+        return [cognate]
+    
     def get_next_unique(self):
         if not self.uniques:
             return []
         self.unique_id = self.unique_id + 1
         return ["%s%d" % (self.UNIQUE_IDENTIFIER, self.unique_id)]
-
+    
+    
     def parse_cognate(self, value):
         raw = value
         if value is None:
@@ -42,7 +54,8 @@ class CognateParser(object):
             value = value.replace('.', ',').replace("/", ",")
             # parse out subcognates
             value = [v.strip() for v in value.split(",")]
-
+            value = [self._split_combined_cognate(v) for v in value]
+            value = [item for sublist in value for item in sublist]
             if self.strict:
                 # remove dubious cognates
                 value = [v for v in value if '?' not in v]

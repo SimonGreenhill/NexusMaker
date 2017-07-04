@@ -1,3 +1,4 @@
+import re
 from collections import defaultdict
 
 from nexus import NexusWriter
@@ -5,6 +6,7 @@ from functools import lru_cache
 
 from .CognateParser import CognateParser
 from .tools import slugify, parse_word
+
 
 
 class Record(object):
@@ -35,18 +37,14 @@ class Record(object):
         if self.LID is None:
             return slugify(self.Language)
         else:
-            return "%s_%d" % (slugify(self.Language), self.LID)
+            return "%s_%s" % (slugify(self.Language), str(self.LID))
             
 
 class NexusMaker(object):
     
     def __init__(self, data, cogparser=None, remove_loans=True):
         self.data = [self._check(r) for r in data]
-        
-        if cogparser is None:
-            self.cogparser = CognateParser(strict=True, uniques=True)
-        else:
-            self.cogparser = cogparser
+        self.cogparser = cogparser if cogparser else CognateParser(strict=True, uniques=True)
         
         # loan words
         self.remove_loans = remove_loans
@@ -192,7 +190,7 @@ class NexusMakerAscertainedWords(NexusMaker):
         """Adds an ascertainment character per word"""
         for word in self.words:
             coglabel = self.make_coglabel(word, self.ASCERTAINMENT_LABEL)
-            if coglabel in nex.data:
+            if coglabel in nex.data:  # pragma: no cover
                 raise ValueError('Duplicate ascertainment key "%s"!' % coglabel)
             
             for lang in self.languages:
@@ -222,7 +220,9 @@ class NexusMakerAscertainedWords(NexusMaker):
             # increment by one as these are siteids not character positions
             siteids = [s + 1 for s in siteids]
             assert self._is_sequential(siteids), 'char is not sequential %s' % char
-            if min(siteids) == max(siteids):
+            if min(siteids) == max(siteids):  # pragma: no cover
+                # should not happen as we always have +1 for the
+                # ascertainment character
                 out = "\tcharset %s = %d;" % (char, min(siteids))
             else:
                 out = "\tcharset %s = %d-%d;" % (char, min(siteids), max(siteids))

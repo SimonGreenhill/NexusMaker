@@ -200,3 +200,8 @@ class TestCognateParser(unittest.TestCase):
     def test_complicated_with_slash(self):
         CP = CognateParser(strict=True, uniques=True)
         self.assertEqual(CP.parse_cognate('53/54'), ['53', '54'])
+
+    def test_combined_cognate(self):
+        self.assertEqual(CognateParser().parse_cognate('1a'), ['1', '1a'])
+        self.assertEqual(CognateParser().parse_cognate('2b'), ['2', '2b'])
+        self.assertEqual(CognateParser().parse_cognate('3az'), ['3', '3az'])

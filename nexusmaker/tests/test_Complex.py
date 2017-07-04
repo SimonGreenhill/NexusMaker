@@ -10,11 +10,11 @@ Aiwoo-501	133751	leg	nyike	86
 Aiwoo-501	133752	leg	nuku	86
 Aiwoo-501	208804	hand	nyime	1,66
 Aiwoo-501	208805	hand	nyimä	1,66
-Banoni-4	1075	leg	rapinna
+Banoni-4	1075	leg	rapinna		
 Banoni-4	250221	five	ghinima	1
 Banoni-4	4	hand	numa-	1,64
 Dehu-196	129281	five	tripi	1
-Dehu-196	196	hand	wanakoim
+Dehu-196	196	hand	wanakoim	
 Eton-1088	265408	five	e-lim	1
 Eton-1088	278627	leg	tua-ŋ	95
 Hiw-639	164951	hand	mja-	1,78
@@ -22,9 +22,9 @@ Hiw-639	164952	leg	ᶢʟoŋo-	17
 Hiw-639	165135	five	təβɔjimə	1
 Iaai-471	125656	hand	beñi-	14
 Iaai-471	125657	hand	HAND	
-Iaai-471	125659	leg	ca
-Iaai-471	125853	five	baa|xaca
-Iaai-471	125865	five	thabyŋ
+Iaai-471	125659	leg	ca	
+Iaai-471	125853	five	baa|xaca	
+Iaai-471	125865	five	thabyŋ	
 Lamogai-67	83796	five	elmé	1
 Lamogai-67	83881	hand	mulǵu	45
 Lamogai-67	83882	hand	melsé	45
@@ -37,15 +37,9 @@ Lamogai-67	83942	leg	kaip	1
 Lamogai-67	83943	leg	kaŋgú	1
 """
 
-def get(x, i):
-    try:
-        return x[i]
-    except IndexError:
-        return None
-
 RECORDS = [r.split("\t") for r in RECORDS.split("\n") if len(r)]
 COMPLEX_TESTDATA = [
-    Record(Language=r[0], Word=r[2], Item=r[3], Cognacy=get(r, 4))
+    Record(Language=r[0], Word=r[2], Item=r[3], Cognacy=r[4])
     for r in RECORDS
 ]
 
@@ -99,7 +93,7 @@ class TestNexusMaker(unittest.TestCase):
     def test_ncognates(self):
         self.assertEqual(len(self.maker.cognates), self.expected_ncog)
     
-    def test_cognate_sets(self):
+    def test_cognate_sets(self):  # pragma: no cover
         errors = []
         for ecog in EXPECTED_COGNATES:
             if ecog not in self.maker.cognates:
@@ -114,7 +108,7 @@ class TestNexusMaker(unittest.TestCase):
         if errors:
             raise AssertionError("Errors: %s" % "\n".join(errors))
 
-    def test_uniques(self):
+    def test_uniques(self):  # pragma: no cover
         errors = []
         obtained = [c for c in self.maker.cognates if 'u' in c[1]]
         expected = {e: 0 for e in EXPECTED_UNIQUES}
@@ -153,7 +147,7 @@ class TestNexusMaker(unittest.TestCase):
             if present == ['Iaai-471']:
                 iaai += 1
 
-        if iaai != 1:
+        if iaai != 1:  # pragma: no cover
             raise AssertionError("Should only have one unique site for Iaai-471-five")
 
     def test_nexus_symbols(self):

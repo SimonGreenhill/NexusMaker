@@ -1,7 +1,8 @@
 import sys
 import unittest
 
-from nexusmaker import NexusMaker, NexusMakerAscertained, NexusMakerAscertainedWords, Record
+from nexusmaker import Record
+from nexusmaker import NexusMaker, NexusMakerAscertained, NexusMakerAscertainedWords
 
 TESTDATA = [
     Record(Language="A", Word="eye", Item="", Cognacy="1"),
@@ -55,7 +56,7 @@ class TestNexusMakerInternals(unittest.TestCase):
         n._cognates[('test', 'u_1')] = ["A", "B"]
         with self.assertRaises(AssertionError):
             n.make()
-        
+
 
 class TestNexusMaker(unittest.TestCase):
     model = NexusMaker
