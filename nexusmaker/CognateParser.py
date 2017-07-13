@@ -1,4 +1,6 @@
 import re
+from nexusmaker.tools import natsort
+
 is_combined_cognate = re.compile(r"""(\d+)([a-z]+)""")
 
 
@@ -67,6 +69,6 @@ class CognateParser(object):
 
             # remove any empty things in the list
             value = [v for v in value if len(v) > 0]
-            return value
+            return natsort(value)
         else:
             raise ValueError("%s" % type(value))

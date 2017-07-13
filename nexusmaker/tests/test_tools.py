@@ -7,7 +7,16 @@ __license__ = 'New-style BSD'
 
 import unittest
 
-from nexusmaker.tools import slugify, parse_word
+from nexusmaker.tools import slugify, parse_word, natsort
+
+class Test_NatSort(unittest.TestCase):
+    def test(self):
+        self.assertEqual(natsort(['b', 'a']), ['a', 'b'])
+        self.assertEqual(natsort(['c', '1']), ['1', 'c'])
+        self.assertEqual(natsort(['52', '1']), ['1', '52'])
+        self.assertEqual(natsort(['54', '53']), ['53', '54'])
+        self.assertEqual(natsort(['53', '54']), ['53', '54'])
+
 
 class Test_Slugify(unittest.TestCase):
     def test_brackets(self):

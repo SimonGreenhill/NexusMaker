@@ -38,5 +38,6 @@ maker.write(nex, filename="output.nex")
 
 ### Version History:
 
+* 1.4: normalise order of cognates (i.e. so 1,54 == 54,1)
 * 1.3: handle cognates of form '1a'
 * 1.2: initial release

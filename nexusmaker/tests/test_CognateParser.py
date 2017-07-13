@@ -208,3 +208,7 @@ class TestCognateParser(unittest.TestCase):
         self.assertEqual(CognateParser().parse_cognate('45c'), ['45', '45c'])
         self.assertEqual(CognateParser().parse_cognate('1a,2b'), ['1', '1a', '2', '2b'])
         self.assertEqual(CognateParser().parse_cognate('1,2a,3b'), ['1', '2', '2a', '3', '3b'])
+
+    def test_normalisation(self):
+        self.assertEqual(CognateParser().parse_cognate('1, 52'), ['1', '52'])
+        self.assertEqual(CognateParser().parse_cognate('52, 1'), ['1', '52'])
