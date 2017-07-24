@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
-from codecs import open
-from os import path
 
-here = path.abspath(path.dirname(__file__))
-
-from nexusmaker import __version__
+__version__ = 1.41
 
 setup(
     name='nexusmaker',

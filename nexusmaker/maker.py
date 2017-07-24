@@ -1,12 +1,11 @@
 import re
 from collections import defaultdict
+from functools import lru_cache
 
 from nexus import NexusWriter
-from functools import lru_cache
 
 from .CognateParser import CognateParser
 from .tools import slugify, parse_word
-
 
 
 class Record(object):
