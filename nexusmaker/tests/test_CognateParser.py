@@ -212,3 +212,7 @@ class TestCognateParser(unittest.TestCase):
     def test_normalisation(self):
         self.assertEqual(CognateParser().parse_cognate('1, 52'), ['1', '52'])
         self.assertEqual(CognateParser().parse_cognate('52, 1'), ['1', '52'])
+
+    def test_trailing_dash(self):
+        with self.assertRaises(ValueError):
+            CognateParser().parse_cognate('1-')

@@ -39,7 +39,6 @@ class CognateParser(object):
         self.unique_id = self.unique_id + 1
         return ["%s%d" % (self.UNIQUE_IDENTIFIER, self.unique_id)]
     
-    
     def parse_cognate(self, value):
         raw = value
         if value is None:
@@ -52,6 +51,8 @@ class CognateParser(object):
             return self.get_next_unique()
         elif isinstance(value, str):
             if value.startswith(","):
+                raise ValueError("Possible broken combined cognate %r" % raw)
+            if value.endswith("-"):
                 raise ValueError("Possible broken combined cognate %r" % raw)
             value = value.replace('.', ',').replace("/", ",")
             # parse out subcognates
