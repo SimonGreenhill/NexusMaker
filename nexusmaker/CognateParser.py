@@ -54,6 +54,8 @@ class CognateParser(object):
                 raise ValueError("Possible broken combined cognate %r" % raw)
             if value.endswith("-"):
                 raise ValueError("Possible broken combined cognate %r" % raw)
+            elif ';' in value:
+                raise ValueError("Possible broken combined cognate %r" % raw)
             value = value.replace('.', ',').replace("/", ",")
             # parse out subcognates
             value = [v.strip() for v in value.split(",")]

@@ -216,3 +216,7 @@ class TestCognateParser(unittest.TestCase):
     def test_trailing_dash(self):
         with self.assertRaises(ValueError):
             CognateParser().parse_cognate('1-')
+
+    def test_semicolon(self):
+        with self.assertRaises(ValueError):
+            CognateParser().parse_cognate('2, 63; 87')
