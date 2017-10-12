@@ -7,22 +7,22 @@ from nexusmaker import NexusMaker, Record
 
 
 data = [
-    Record(language="A", word="eye", item="", cognate="1"),
-    Record(language="A", word="leg", item="", cognate="1"),
-    Record(language="A", word="arm", item="", cognate="1"),
+    Record(Language="A", Word="eye", Item="", Cognate="1"),
+    Record(Language="A", Word="leg", Item="", Cognate="1"),
+    Record(Language="A", Word="arm", Item="", Cognate="1"),
     
-    Record(language="B", word="eye", item="", cognate="1"),
-    Record(language="B", word="leg", item="", cognate="2"),
-    Record(language="B", word="arm", item="", cognate="2"),
+    Record(Language="B", Word="eye", Item="", Cognate="1"),
+    Record(Language="B", Word="leg", Item="", Cognate="2"),
+    Record(Language="B", Word="arm", Item="", Cognate="2"),
     
-    Record(language="C", word="eye", item="", cognate="1"),
-    # No Record for C 'leg'
-    Record(language="C", word="arm", item="", cognate="3"),
+    Record(Language="C", Word="eye", Item="", Cognate="1"),
+    # No ReCord for C 'leg'
+    Record(Language="C", Word="arm", Item="", Cognate="3"),
 
-    Record(language="D", word="eye", item="", cognate="1", loan=True),
-    Record(language="D", word="leg", item="", cognate="1"),
-    Record(language="D", word="leg", item="", cognate="2"),
-    Record(language="D", word="arm", item="", cognate="2,3"),
+    Record(Language="D", Word="eye", Item="", Cognate="1", loan=True),
+    Record(Language="D", Word="leg", Item="", Cognate="1"),
+    Record(Language="D", Word="leg", Item="", Cognate="2"),
+    Record(Language="D", Word="arm", Item="", Cognate="2,3"),
 ]
 
 maker = NexusMaker(data)
