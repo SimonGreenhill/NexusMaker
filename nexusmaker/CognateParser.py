@@ -8,15 +8,17 @@ class CognateParser(object):
 
     UNIQUE_IDENTIFIER = "u_"
 
-    def __init__(self, strict=True, uniques=True):
+    def __init__(self, strict=True, uniques=True, sort=True):
         """
         Parses cognates.
 
         - strict (default=True):  remove dubious cognates (?)
         - uniques (default=True): non-cognate items get unique states
+        - sort (default=True):  normalise ordering with natsort (i.e. 2,1 => 1,2)
         """
         self.uniques = uniques
         self.strict = strict
+        self.sort = sort
         self.unique_id = 0
 
     def is_unique_cognateset(self, cog, labelled=False):
@@ -26,12 +28,8 @@ class CognateParser(object):
             return "_%s" % self.UNIQUE_IDENTIFIER in str(cog)
     
     def _split_combined_cognate(self, cognate):
-        if is_combined_cognate.match(cognate):
-            return [
-                is_combined_cognate.findall(cognate)[0][0],
-                cognate
-            ]
-        return [cognate]
+        m = is_combined_cognate.findall(cognate)
+        return [m[0][0], cognate] if m else [cognate]
     
     def get_next_unique(self):
         if not self.uniques:
@@ -58,8 +56,9 @@ class CognateParser(object):
                 raise ValueError("Possible broken combined cognate %r" % raw)
             value = value.replace('.', ',').replace("/", ",")
             # parse out subcognates
-            value = [v.strip() for v in value.split(",")]
-            value = [self._split_combined_cognate(v) for v in value]
+            value = [
+                self._split_combined_cognate(v.strip()) for v in value.split(",")
+            ]
             value = [item for sublist in value for item in sublist]
             if self.strict:
                 # remove dubious cognates
@@ -69,9 +68,12 @@ class CognateParser(object):
                     return self.get_next_unique()
             else:
                 value = [v.replace("?", "") for v in value]
-
+            
             # remove any empty things in the list
             value = [v for v in value if len(v) > 0]
-            return natsort(value)
+            
+            if self.sort:
+                value = natsort(value)
+            return value
         else:
             raise ValueError("%s" % type(value))

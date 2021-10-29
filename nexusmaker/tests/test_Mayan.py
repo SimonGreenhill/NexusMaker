@@ -198,6 +198,8 @@ EXPECTED_COGNATES = {
     ('cloud', '12'): {'Colonial_Yucatec_035'},
 }
 # COMBINED COGNATE SETS
+# (i.e. we need to merge in the extra items so that a language coded as 
+# "2b" is also present in set "2"
 EXPECTED_COGNATES[('cloud', '2')] = EXPECTED_COGNATES[('cloud', '2')] | EXPECTED_COGNATES[('cloud', '2b')]
 EXPECTED_COGNATES[('cloud', '5')] = EXPECTED_COGNATES[('cloud', '5')] | EXPECTED_COGNATES[('cloud', '5b')]
 EXPECTED_COGNATES[('cloud', '6')] = EXPECTED_COGNATES[('cloud', '6')] | EXPECTED_COGNATES[('cloud', '6b')]
@@ -241,6 +243,7 @@ class TestNexusMaker(unittest.TestCase):
 
     def test_cognate_sets(self):  # pragma: no cover
         errors = []
+        print(EXPECTED_COGNATES)
         for ecog in EXPECTED_COGNATES:
             if ecog not in self.maker.cognates:
                 errors.append("Missing %s" % (ecog, ))

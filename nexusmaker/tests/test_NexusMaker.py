@@ -143,7 +143,7 @@ class TestNexusMaker(unittest.TestCase):
 
     def test_write(self):
         out = self.maker.write()
-        assert out.startswith("#NEXUS")
+        assert out.lstrip().startswith("#NEXUS")
         assert 'NTAX=4' in out
         assert 'CHARSTATELABELS' in out
         assert 'MATRIX' in out
