@@ -6,10 +6,11 @@ test:
 	coverage html
 
 build:
-	python setup.py sdist bdist_wheel
+	#python setup.py sdist bdist_wheel
+	python -m build
 
 release:
-	python setup.py sdist bdist_wheel upload
+	 twine upload --verbose dist/...
 
 clean:
 	rm -rf build/*
