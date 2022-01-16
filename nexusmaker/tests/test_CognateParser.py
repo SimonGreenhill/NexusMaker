@@ -26,10 +26,10 @@ def test_dubious():
     assert CognateParser(uniques=True).parse_cognate('1?, 2') == ['2']
     assert CognateParser(uniques=True).parse_cognate('91?, 42') == ['42']
     assert CognateParser(uniques=True).parse_cognate('?, 31') == ['31']
-    # note that both of these are dubious, should become a unique 
+    # note that both of these are dubious, should become a unique
     # state instead
     assert CognateParser(uniques=True).parse_cognate('1?, 2?') == ['u_1']
-    
+
     # check these are removed when uniques are false
     assert CognateParser(uniques=False).parse_cognate('1?') == []
     assert CognateParser(uniques=False).parse_cognate('?') == []
@@ -41,7 +41,7 @@ def test_bad_entries():
     assert CognateParser(uniques=True).parse_cognate('x') == ['u_1']
     assert CognateParser(uniques=True).parse_cognate('X20') == ['u_1']
     assert CognateParser(uniques=True).parse_cognate('x20') == ['u_1']
-    
+
     # entries that are in the wrong word (e.g. you sg. not you pl.)
     assert CognateParser(uniques=True).parse_cognate('s') == ['u_1']
 
@@ -76,11 +76,11 @@ def test_complicated_strict_unique():
     # # 3. right
     # Maori    katau         5, 40
     # Maori    matau         5
-    # South Island Maori    tika          
+    # South Island Maori    tika
     assert CP.parse_cognate('5, 40') == ['5', '40']
     assert CP.parse_cognate('5') == ['5']
     assert CP.parse_cognate('') == ['u_1']
-    
+
     # # 8. turn
     # Maori    huri         15
     # South Island Maori    tahuli         15
@@ -88,7 +88,7 @@ def test_complicated_strict_unique():
     assert CP.parse_cognate('15') == ['15']
     assert CP.parse_cognate('15') == ['15']
     assert CP.parse_cognate('15') == ['15']
-    
+
     # # 20. to know
     # Maori    moohio         52
     # South Island Maori    matau         1
@@ -113,11 +113,11 @@ def test_complicated_nostrict_unique():
     # # 3. right
     # Maori    katau         5, 40
     # Maori    matau         5
-    # South Island Maori    tika          
+    # South Island Maori    tika
     assert CP.parse_cognate('5, 40') == ['5', '40']
     assert CP.parse_cognate('5') == ['5']
     assert CP.parse_cognate('') == ['u_1']
-    
+
     # # 8. turn
     # Maori    huri         15
     # South Island Maori    tahuli         15
@@ -125,12 +125,12 @@ def test_complicated_nostrict_unique():
     assert CP.parse_cognate('15') == ['15']
     assert CP.parse_cognate('15') == ['15']
     assert CP.parse_cognate('15') == ['15']
-    
+
     # # 20. to know
     # Maori    moohio         52
     # South Island Maori    matau         1
     # South Island Maori    mohio    to know    52
-    # South Island Maori    ara    to know, to awake     
+    # South Island Maori    ara    to know, to awake
     assert CP.parse_cognate('52') == ['52']
     assert CP.parse_cognate('1') == ['1']
     assert CP.parse_cognate('52') == ['52']
@@ -144,16 +144,17 @@ def test_complicated_nostrict_unique():
     assert CP.parse_cognate('18') == ['18']
     assert CP.parse_cognate('19, 34?') == ['19', '34']
 
+
 def test_complicated_nostrict_nounique():
     CP = CognateParser(strict=False, uniques=False)
     # # 3. right
     # Maori    katau         5, 40
     # Maori    matau         5
-    # South Island Maori    tika          
+    # South Island Maori    tika
     assert CP.parse_cognate('5, 40') == ['5', '40']
     assert CP.parse_cognate('5') == ['5']
     assert CP.parse_cognate('') == []
-    
+
     # # 8. turn
     # Maori    huri         15
     # South Island Maori    tahuli         15
@@ -161,17 +162,17 @@ def test_complicated_nostrict_nounique():
     assert CP.parse_cognate('15') == ['15']
     assert CP.parse_cognate('15') == ['15']
     assert CP.parse_cognate('15') == ['15']
-    
+
     # # 20. to know
     # Maori    moohio         52
     # South Island Maori    matau         1
     # South Island Maori    mohio    to know    52
-    # South Island Maori    ara    to know, to awake     
+    # South Island Maori    ara    to know, to awake
     assert CP.parse_cognate('52') == ['52']
     assert CP.parse_cognate('1') == ['1']
     assert CP.parse_cognate('52') == ['52']
     assert CP.parse_cognate('') == []
-    
+
     # # 36: to spit
     # Maori    tuha         19, 34?
     # South Island Maori    huare         18
@@ -217,4 +218,3 @@ def test_trailing_dash():
 def test_semicolon():
     with pytest.raises(ValueError):
         CognateParser().parse_cognate('2, 63; 87')
-

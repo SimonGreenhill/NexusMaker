@@ -11,11 +11,11 @@ def testdata():
         Record(Language="A", Word="eye", Item="", Cognacy="1"),
         Record(Language="A", Word="leg", Item="", Cognacy="1"),
         Record(Language="A", Word="arm", Item="", Cognacy="1"),
-    
+
         Record(Language="B", Word="eye", Item="", Cognacy="1"),
         Record(Language="B", Word="leg", Item="", Cognacy="2"),
         Record(Language="B", Word="arm", Item="", Cognacy="2"),
-    
+
         Record(Language="C", Word="eye", Item="", Cognacy="1"),
         # No Record for C 'leg'
         Record(Language="C", Word="arm", Item="", Cognacy="3"),
@@ -40,4 +40,3 @@ def nexusmakerasc(testdata):
 @pytest.fixture(scope='class')
 def nexusmakerascwords(testdata):
     return NexusMakerAscertainedWords(data=testdata)
-

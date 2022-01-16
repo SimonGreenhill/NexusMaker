@@ -3,6 +3,7 @@ import unicodedata
 
 is_unique = re.compile(r"""^(.*)_(u_?\d+)$""")
 
+
 def parse_word(label, delimiter="_"):
     """
     Returns a tuple of word, cognate_id.
@@ -31,9 +32,13 @@ def slugify(var):
 def natsort(alist):
     """
     Sort the given iterable in the way that humans expect.
-    
+
     From: https://stackoverflow.com/questions/2669059/how-to-sort-alpha-numeric-set-in-python
-    """ 
-    convert = lambda text: int(text) if text.isdigit() else text 
-    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)] 
-    return sorted(alist, key = alphanum_key)
+    """
+    def convert(text):
+        return int(text) if text.isdigit() else text
+
+    def alphanum_key(key):
+        return [convert(c) for c in re.split('([0-9]+)', key)]
+
+    return sorted(alist, key=alphanum_key)

@@ -1,5 +1,4 @@
 import pytest
-from nexusmaker import NexusMakerAscertainedWords
 from nexusmaker.tests.test_NexusMaker import TestNexusMaker
 
 
@@ -12,7 +11,7 @@ class TestNexusMakerAscertainedWords(TestNexusMaker):
         # 1 more site per word than in ascertainment is none:
         #   6 cognates + 3 words = 9
         assert len(nexus.data.keys()) == 9
-        
+
     def test_get_characters_simple(self, maker, nexus):
         chars = maker._get_characters(nexus)
         # NOTE characters are zero indexed
@@ -22,7 +21,7 @@ class TestNexusMakerAscertainedWords(TestNexusMaker):
 
     def test_get_characters_error(self, maker, nexus):
         with pytest.raises(ValueError):
-            chars = maker._get_characters(nexus, delimiter="X")
+            maker._get_characters(nexus, delimiter="X")
 
     def test_create_assumptions_simple(self, maker, nexus):
         assumpt = maker.create_assumptions(nexus)
@@ -61,7 +60,7 @@ class TestNexusMakerAscertainedWords(TestNexusMaker):
         assert 'charset leg' in out
 
     def test_is_sequential(self, maker):
-        assert maker._is_sequential([1,2,3,4,5])
-        assert maker._is_sequential([3,4,5,6,7])
+        assert maker._is_sequential([1, 2, 3, 4, 5])
+        assert maker._is_sequential([3, 4, 5, 6, 7])
         assert not maker._is_sequential([1, 3])
         assert not maker._is_sequential([9, 2])

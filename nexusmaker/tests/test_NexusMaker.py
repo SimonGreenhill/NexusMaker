@@ -10,7 +10,7 @@ def test_nexusmaker_input():
     # no language
     with pytest.raises(ValueError):
         NexusMaker([
-            Record(Word="leg", Item="", Cognacy="2")  
+            Record(Word="leg", Item="", Cognacy="2")
         ])
 
     # no word
@@ -44,7 +44,7 @@ class TestNexusMaker:
     @pytest.fixture
     def maker(self, nexusmaker):
         return nexusmaker
-        
+
     @pytest.fixture
     def nexus(self, maker):
         return maker.make()
@@ -76,10 +76,12 @@ class TestNexusMaker:
         assert maker._is_missing_for_word('B', 'arm') == False
 
         assert maker._is_missing_for_word('C', 'eye') == False
-        assert maker._is_missing_for_word('C', 'leg') == True, "Should be missing 'leg' for Language 'C'"
+        assert maker._is_missing_for_word('C', 'leg') == True, \
+            "Should be missing 'leg' for Language 'C'"
         assert maker._is_missing_for_word('C', 'arm') == False
 
-        assert maker._is_missing_for_word('D', 'eye') == True, "Should be missing 'eye' for Language 'D' (loan)"
+        assert maker._is_missing_for_word('D', 'eye') == True, \
+            "Should be missing 'eye' for Language 'D' (loan)"
         assert maker._is_missing_for_word('D', 'leg') == False
         assert maker._is_missing_for_word('D', 'arm') == False
 

@@ -1,5 +1,4 @@
 import pytest
-from nexusmaker import NexusMakerAscertained
 from nexusmaker.tests.test_NexusMaker import TestNexusMaker
 
 

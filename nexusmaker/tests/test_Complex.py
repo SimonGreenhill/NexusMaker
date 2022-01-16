@@ -12,21 +12,21 @@ Aiwoo-501	133751	leg	nyike	86
 Aiwoo-501	133752	leg	nuku	86
 Aiwoo-501	208804	hand	nyime	1,66
 Aiwoo-501	208805	hand	nyimä	1,66
-Banoni-4	1075	leg	rapinna		
+Banoni-4	1075	leg	rapinna
 Banoni-4	250221	five	ghinima	1
 Banoni-4	4	hand	numa-	1,64
 Dehu-196	129281	five	tripi	1
-Dehu-196	196	hand	wanakoim	
+Dehu-196	196	hand	wanakoim
 Eton-1088	265408	five	e-lim	1
 Eton-1088	278627	leg	tua-ŋ	95
 Hiw-639	164951	hand	mja-	1,78
 Hiw-639	164952	leg	ᶢʟoŋo-	17
 Hiw-639	165135	five	təβɔjimə	1
 Iaai-471	125656	hand	beñi-	14
-Iaai-471	125657	hand	HAND	
-Iaai-471	125659	leg	ca	
-Iaai-471	125853	five	baa|xaca	
-Iaai-471	125865	five	thabyŋ	
+Iaai-471	125657	hand	HAND
+Iaai-471	125659	leg	ca
+Iaai-471	125853	five	baa|xaca
+Iaai-471	125865	five	thabyŋ
 Lamogai-67	83796	five	elmé	1
 Lamogai-67	83881	hand	mulǵu	45
 Lamogai-67	83882	hand	melsé	45
@@ -39,7 +39,14 @@ Lamogai-67	83942	leg	kaip	1
 Lamogai-67	83943	leg	kaŋgú	1
 """
 
-RECORDS = [r.split("\t") for r in RECORDS.split("\n") if len(r)]
+
+def expand(r):  # make sure there are 5 columns in the record
+    while len(r) < 5:
+        r.append("")
+    return r
+
+
+RECORDS = [expand(r.split("\t")) for r in RECORDS.split("\n") if len(r)]
 COMPLEX_TESTDATA = [
     Record(Language=r[0], Word=r[2], Item=r[3], Cognacy=r[4])
     for r in RECORDS
@@ -79,7 +86,7 @@ class TestNexusMakerComplex:
     @pytest.fixture
     def maker(self):
         return NexusMaker(data=COMPLEX_TESTDATA)
-        
+
     @pytest.fixture
     def nexus(self, maker):
         return maker.make()
@@ -92,25 +99,25 @@ class TestNexusMakerComplex:
 
     def test_words(self, maker):
         assert maker.words == {'hand', 'leg', 'five'}
-    
+
     def test_ncognates(self, maker):
         assert len(maker.cognates) == self.expected_ncog
-    
+
     def test_cognate_sets(self, maker):
         for ecog in EXPECTED_COGNATES:
             assert ecog in maker.cognates, "Missing %s" % ecog
             obtained = maker.cognates.get(ecog, set())
             assert obtained == EXPECTED_COGNATES[ecog], \
                 "Cognate set %s incorrect %r != %r" % (
-                    ecog, EXPECTED_COGNATES[ecog], obtained
-                )
+                    ecog, EXPECTED_COGNATES[ecog], obtained)
 
     def test_uniques(self, maker):
         obtained = [c for c in maker.cognates if 'u' in c[1]]
         expected = {e: 0 for e in EXPECTED_UNIQUES}
         # check what has been identified as unique
         for cog in obtained:
-            assert len(maker.cognates[cog]) == 1, "Unique cognate %s should only have one member" % cog
+            assert len(maker.cognates[cog]) == 1, \
+                "Unique cognate %s should only have one member" % cog
             # make key to look up EXPECTED_UNIQUES as (word, language)
             key = (cog[0], list(maker.cognates[cog])[0])
             # error on anything that is not expected
@@ -119,7 +126,8 @@ class TestNexusMakerComplex:
 
         # the counts for each expected cognate should be max 1.
         for e in expected:
-            assert expected[e] == 1, "Expected 1 cognate for %s, but got %d" % (e, expected[e])
+            assert expected[e] == 1, \
+                "Expected 1 cognate for %s, but got %d" % (e, expected[e])
 
     def test_dehu_is_all_missing_for_leg(self, nexus):
         for cog in [cog for cog in nexus.data if cog.startswith('leg_')]:
@@ -157,18 +165,18 @@ class TestNexusMakerComplex:
 
     def test_nexus_nchar(self, nexus):
         assert len(nexus.characters) == self.expected_nchar
-    
+
     def test_entries_with_a_cognate_word_arenot_added_as_unique(self, nexus):
         hand = [c for c in nexus.characters if c.startswith('hand_')]
         hand = [c for c in hand if CognateParser().is_unique_cognateset(c, labelled=True)]
         assert len(hand) == 1, 'Only expecting one unique character for hand'
         assert nexus.data['hand_u_2']['Iaai-471'] in ('0', '?'), \
             'Iaai-471 should not be unique for `hand`'
-    
+
 
 class TestNexusMakerComplexAscertained(TestNexusMakerComplex):
     expected_nchar = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES) + 1
-    
+
     @pytest.fixture
     def maker(self):
         return NexusMakerAscertained(data=COMPLEX_TESTDATA)
@@ -176,8 +184,7 @@ class TestNexusMakerComplexAscertained(TestNexusMakerComplex):
 
 class TestNexusMakerComplexAscertainedWords(TestNexusMakerComplexAscertained):
     expected_nchar = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES) + 3
-    
+
     @pytest.fixture
     def maker(self):
         return NexusMakerAscertainedWords(data=COMPLEX_TESTDATA)
-

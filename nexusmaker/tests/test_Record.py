@@ -1,9 +1,11 @@
-import pytest
-
 from nexusmaker import Record
 
+
 def test_simple():
-    r = Record(ID=1, WID=2, LID=3, Language='English', Word='Hand', Item='hand', Annotation='?', Cognacy=None, Loan="L")
+    r = Record(
+        ID=1, WID=2, LID=3, Language='English', Word='Hand', Item='hand',
+        Annotation='?', Cognacy=None, Loan="L"
+    )
     assert r.ID == 1
     assert r.WID == 2
     assert r.LID == 3
@@ -28,8 +30,13 @@ def test_is_loan():
 
 
 def test_get_token():
-    r = Record(ID=1, WID=2, LID=3, Language='English', Word='Hand', Item='hand', Annotation='?', Cognacy=None, Loan="L")
+    r = Record(
+        ID=1, WID=2, LID=3, Language='English', Word='Hand', Item='hand',
+        Annotation='?', Cognacy=None, Loan="L"
+    )
     assert r.get_taxon() == "English_3"
-    r = Record(ID=1, WID=2, LID=None, Language='English', Word='Hand', Item='hand', Annotation='?', Cognacy=None, Loan="L")
+    r = Record(
+        ID=1, WID=2, LID=None, Language='English', Word='Hand', Item='hand',
+        Annotation='?', Cognacy=None, Loan="L"
+    )
     assert r.get_taxon() == "English"
-        

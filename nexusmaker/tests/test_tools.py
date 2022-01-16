@@ -1,8 +1,7 @@
-#!/usr/bin/env python3
-#coding=utf-8
 import pytest
 
 from nexusmaker.tools import slugify, parse_word, natsort
+
 
 def test_natural_sort():
     assert natsort(['b', 'a']) == ['a', 'b']
@@ -13,7 +12,7 @@ def test_natural_sort():
 
 
 def test_slugify():
-    assert slugify('Banggai (W.dialect)') =='Banggai_Wdialect'
+    assert slugify('Banggai (W.dialect)') == 'Banggai_Wdialect'
     assert slugify('Aklanon - Bisayan') == 'Aklanon_Bisayan'
     assert slugify('Gimán') == 'Giman'
     assert slugify('Hanunóo') == 'Hanunoo'
@@ -36,7 +35,6 @@ def test_parse_word():
     assert parse_word("correct_true_u5631") == ("correct_true", "u5631")
     assert parse_word("to_tie_up_fasten_u_5685") == ("to_tie_up_fasten", "u_5685")
     assert parse_word("to_tie_up_fasten_u5685") == ("to_tie_up_fasten", "u5685")
-    
+
     with pytest.raises(ValueError):
         parse_word("hand")
-
