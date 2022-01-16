@@ -1,6 +1,8 @@
-import unittest
+import pytest
 
-from nexusmaker import Record, NexusMaker, NexusMakerAscertained
+from nexusmaker import Record
+from nexusmaker import NexusMaker
+from nexusmaker import NexusMakerAscertained
 from nexusmaker import NexusMakerAscertainedWords
 from nexusmaker import CognateParser
 
@@ -210,19 +212,22 @@ EXPECTED_COGNATES[('cloud', '6')] = EXPECTED_COGNATES[('cloud', '6')] | EXPECTED
 EXPECTED_UNIQUES = []
 
 
-class TestNexusMaker(unittest.TestCase):
-    model = NexusMaker
+class TestNexusMakerMayan:
+    @pytest.fixture
+    def maker(self):
+        return NexusMaker(data=COMPLEX_TESTDATA)
+        
+    @pytest.fixture
+    def nexus(self, maker):
+        return maker.make()
+    
     # number of cognate sets expected
     expected_ncog = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES)
     # number of characters expected in the nexus file
     expected_nchar = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES)
     
-    def setUp(self):
-        self.maker = self.model(data=COMPLEX_TESTDATA)
-        self.nex = self.maker.make()
-
-    def test_languages(self):
-        self.assertEqual(self.maker.languages, {
+    def test_languages(self, maker):
+        assert maker.languages == {
             'Mocho_017', 'Tzotzil_011', 'Cholti_032',
             'Colonial_Cakchiquel_034', 'Tzutujil_023', 'Chorti_007',
             'Poqomam_029', 'Chol_008', 'Lacandon_003', 'Chontal_009',
@@ -233,82 +238,54 @@ class TestNexusMaker(unittest.TestCase):
             'Kiche_024', 'Awakateko_020', 'Colonial_Yucatec_035',
             'Uspanteko_028', 'Teco_018', 'Tojolabal_012', 'Tuzanteco_037',
             'Qeqchi_031', 'Sipakapeno_027', 'Chicomuceltec_002'
-        })
+        }
 
-    def test_words(self):
-        self.assertEqual(self.maker.words, {'cloud'})
+    def test_words(self, maker):
+        assert maker.words == {'cloud'}
 
-    def test_ncognates(self):
-        self.assertEqual(len(self.maker.cognates), self.expected_ncog)
+    def test_ncognates(self, maker):
+        assert len(maker.cognates) == self.expected_ncog
 
-    def test_cognate_sets(self):  # pragma: no cover
-        errors = []
-        print(EXPECTED_COGNATES)
+    def test_cognate_sets(self, maker):
         for ecog in EXPECTED_COGNATES:
-            if ecog not in self.maker.cognates:
-                errors.append("Missing %s" % (ecog, ))
-            elif self.maker.cognates.get(ecog, set()) != EXPECTED_COGNATES[ecog]:
-                errors.append("Cognate set %s incorrect %r != %r" % (
+            assert ecog in maker.cognates, "Missing %s" % ecog
+            assert maker.cognates.get(ecog, set()) == EXPECTED_COGNATES[ecog], \
+                "Cognate set %s incorrect %r != %r" % (
                     ecog,
                     EXPECTED_COGNATES[ecog],
-                    self.maker.cognates.get(ecog, set())
-                ))
+                    maker.cognates.get(ecog, set())
+                )
 
-        if errors:
-            raise AssertionError("Errors: %s" % "\n".join(errors))
+    def test_nexus_symbols(self, nexus):
+        assert sorted(nexus.symbols) == sorted(['0', '1'])
 
-    def test_uniques(self):  # pragma: no cover
-        errors = []
-        obtained = [c for c in self.maker.cognates if 'u' in c[1]]
-        expected = {e: 0 for e in EXPECTED_UNIQUES}
-        # check what has been identified as unique
-        for cog in obtained:
-            if len(self.maker.cognates[cog]) != 1:
-                errors.append("Unique cognate %s should only have one member" % (cog, ))
-            # make key to look up EXPECTED_UNIQUES as (word, language)
-            key = (cog[0], list(self.maker.cognates[cog])[0])
-            # error on anything that is not expected
-            if key not in expected:
-                errors.append("%s unexpectedly seen as unique" % (key, ))
-            else:
-                expected[key] += 1
+    def test_nexus_taxa(self, maker, nexus):
+        assert maker.languages == nexus.taxa
 
-        # the counts for each expected cognate should be max 1.
-        for e in expected:
-            if expected[e] != 1:
-                errors.append("Expected 1 cognate for %s, but got %d" % (e, expected[e]))
-
-        if errors:
-            raise AssertionError("Errors: %s" % "\n".join(errors))
-
-    def test_nexus_symbols(self):
-        assert sorted(self.nex.symbols) == sorted(['0', '1'])
-
-    def test_nexus_taxa(self):
-        self.assertEqual(self.maker.languages, self.nex.taxa)
-
-    def test_nexus_characters_expected_cognates(self):
+    def test_nexus_characters_expected_cognates(self, nexus):
         for e in EXPECTED_COGNATES:
-            assert "_".join(e) in self.nex.characters
+            assert "_".join(e) in nexus.characters
 
-    def test_nexus_characters_expected_uniques(self):
+    def test_nexus_characters_expected_uniques(self, nexus):
         uniques = [
-            c for c in self.nex.characters if
+            c for c in nexus.characters if
             CognateParser().is_unique_cognateset(c, labelled=True)
         ]
         assert len(uniques) == len(EXPECTED_UNIQUES)
 
-    def test_nexus_nchar(self):
-        assert len(self.nex.characters) == self.expected_nchar
+    def test_nexus_nchar(self, nexus):
+        assert len(nexus.characters) == self.expected_nchar
 
 
-class TestNexusMakerAscertained(TestNexusMaker):
-    model = NexusMakerAscertained
+class TestNexusMakerMayanAscertained(TestNexusMakerMayan):
     expected_nchar = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES) + 1
+    
+    @pytest.fixture
+    def maker(self):
+        return NexusMakerAscertained(data=COMPLEX_TESTDATA)
 
 
-class TestNexusMakerAscertainedWords(TestNexusMaker):
-    model = NexusMakerAscertainedWords
-    expected_nchar = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES) + 1
-
-
+class TestNexusMakerMayanAscertainedWords(TestNexusMakerMayanAscertained):
+    @pytest.fixture
+    def maker(self):
+        return NexusMakerAscertainedWords(data=COMPLEX_TESTDATA)

@@ -1,6 +1,8 @@
-import unittest
+import pytest
 
-from nexusmaker import Record, NexusMaker, NexusMakerAscertained
+from nexusmaker import Record
+from nexusmaker import NexusMaker
+from nexusmaker import NexusMakerAscertained
 from nexusmaker import NexusMakerAscertainedWords
 from nexusmaker import CognateParser
 
@@ -68,123 +70,114 @@ EXPECTED_UNIQUES = [
 ]
 
 
-
-
-class TestNexusMaker(unittest.TestCase):
-    model = NexusMaker
+class TestNexusMakerComplex:
     # number of cognate sets expected
     expected_ncog = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES)
     # number of characters expected in the nexus file
     expected_nchar = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES)
-    
-    def setUp(self):
-        self.maker = self.model(data=COMPLEX_TESTDATA)
-        self.nex = self.maker.make()
 
-    def test_languages(self):
-        self.assertEqual(self.maker.languages, {
+    @pytest.fixture
+    def maker(self):
+        return NexusMaker(data=COMPLEX_TESTDATA)
+        
+    @pytest.fixture
+    def nexus(self, maker):
+        return maker.make()
+
+    def test_languages(self, maker):
+        assert maker.languages == {
             'Aiwoo-501', 'Banoni-4', 'Dehu-196', 'Eton-1088', 'Hiw-639',
             'Iaai-471', 'Lamogai-67'
-        })
+        }
 
-    def test_words(self):
-        self.assertEqual(self.maker.words, {'hand', 'leg', 'five'})
+    def test_words(self, maker):
+        assert maker.words == {'hand', 'leg', 'five'}
     
-    def test_ncognates(self):
-        self.assertEqual(len(self.maker.cognates), self.expected_ncog)
+    def test_ncognates(self, maker):
+        assert len(maker.cognates) == self.expected_ncog
     
-    def test_cognate_sets(self):  # pragma: no cover
-        errors = []
+    def test_cognate_sets(self, maker):
         for ecog in EXPECTED_COGNATES:
-            if ecog not in self.maker.cognates:
-                errors.append("Missing %s" % (ecog, ))
-            elif self.maker.cognates.get(ecog, set()) != EXPECTED_COGNATES[ecog]:
-                errors.append("Cognate set %s incorrect %r != %r" % (
-                    ecog,
-                    EXPECTED_COGNATES[ecog],
-                    self.maker.cognates.get(ecog, set())
-                ))
+            assert ecog in maker.cognates, "Missing %s" % ecog
+            obtained = maker.cognates.get(ecog, set())
+            assert obtained == EXPECTED_COGNATES[ecog], \
+                "Cognate set %s incorrect %r != %r" % (
+                    ecog, EXPECTED_COGNATES[ecog], obtained
+                )
 
-        if errors:
-            raise AssertionError("Errors: %s" % "\n".join(errors))
-
-    def test_uniques(self):  # pragma: no cover
-        errors = []
-        obtained = [c for c in self.maker.cognates if 'u' in c[1]]
+    def test_uniques(self, maker):
+        obtained = [c for c in maker.cognates if 'u' in c[1]]
         expected = {e: 0 for e in EXPECTED_UNIQUES}
         # check what has been identified as unique
         for cog in obtained:
-            if len(self.maker.cognates[cog]) != 1:
-                errors.append("Unique cognate %s should only have one member" % (cog, ))
+            assert len(maker.cognates[cog]) == 1, "Unique cognate %s should only have one member" % cog
             # make key to look up EXPECTED_UNIQUES as (word, language)
-            key = (cog[0], list(self.maker.cognates[cog])[0])
+            key = (cog[0], list(maker.cognates[cog])[0])
             # error on anything that is not expected
-            if key not in expected:
-                errors.append("%s unexpectedly seen as unique" % (key, ))
-            else:
-                expected[key] += 1
+            assert key in expected, "%s unexpectedly seen as unique" % key
+            expected[key] += 1
 
         # the counts for each expected cognate should be max 1.
         for e in expected:
-            if expected[e] != 1:
-                errors.append("Expected 1 cognate for %s, but got %d" % (e, expected[e]))
+            assert expected[e] == 1, "Expected 1 cognate for %s, but got %d" % (e, expected[e])
 
-        if errors:
-            raise AssertionError("Errors: %s" % "\n".join(errors))
+    def test_dehu_is_all_missing_for_leg(self, nexus):
+        for cog in [cog for cog in nexus.data if cog.startswith('leg_')]:
+            assert nexus.data[cog]['Dehu-196'] == '?'
 
-    def test_dehu_is_all_missing_for_leg(self):
-        for cog in [cog for cog in self.nex.data if cog.startswith('leg_')]:
-            assert self.nex.data[cog]['Dehu-196'] == '?'
+    def test_eton_is_all_missing_for_hand(self, nexus):
+        for cog in [cog for cog in nexus.data if cog.startswith('hand_')]:
+            assert nexus.data[cog]['Eton-1088'] == '?'
 
-    def test_eton_is_all_missing_for_hand(self):
-        for cog in [cog for cog in self.nex.data if cog.startswith('hand_')]:
-            assert self.nex.data[cog]['Eton-1088'] == '?'
-
-    def test_only_one_unique_for_Iaai471(self):
+    def test_only_one_unique_for_Iaai471(self, nexus):
         iaai = 0
-        for cog in [cog for cog in self.nex.data if cog.startswith('five_u_')]:
-            present = [t for t in self.nex.data[cog] if self.nex.data[cog][t] == '1']
+        for cog in [cog for cog in nexus.data if cog.startswith('five_u_')]:
+            present = [t for t in nexus.data[cog] if nexus.data[cog][t] == '1']
             if present == ['Iaai-471']:
                 iaai += 1
 
-        if iaai != 1:  # pragma: no cover
-            raise AssertionError("Should only have one unique site for Iaai-471-five")
+        assert iaai == 1, "Should only have one unique site for Iaai-471-five"
 
-    def test_nexus_symbols(self):
-        assert sorted(self.nex.symbols) == sorted(['0', '1'])
+    def test_nexus_symbols(self, nexus):
+        assert sorted(nexus.symbols) == sorted(['0', '1']), nexus.symbols
 
-    def test_nexus_taxa(self):
-        self.assertEqual(self.maker.languages, self.nex.taxa)
+    def test_nexus_taxa(self, maker, nexus):
+        assert maker.languages == nexus.taxa
 
-    def test_nexus_characters_expected_cognates(self):
+    def test_nexus_characters_expected_cognates(self, nexus):
         for e in EXPECTED_COGNATES:
-            assert "_".join(e) in self.nex.characters
+            assert "_".join(e) in nexus.characters
 
-    def test_nexus_characters_expected_uniques(self):
+    def test_nexus_characters_expected_uniques(self, nexus):
         uniques = [
-            c for c in self.nex.characters if
+            c for c in nexus.characters if
             CognateParser().is_unique_cognateset(c, labelled=True)
         ]
         assert len(uniques) == len(EXPECTED_UNIQUES)
 
-    def test_nexus_nchar(self):
-        assert len(self.nex.characters) == self.expected_nchar
+    def test_nexus_nchar(self, nexus):
+        assert len(nexus.characters) == self.expected_nchar
     
-    def test_entries_with_a_cognate_word_arenot_added_as_unique(self):
-        hand = [c for c in self.nex.characters if c.startswith('hand_')]
+    def test_entries_with_a_cognate_word_arenot_added_as_unique(self, nexus):
+        hand = [c for c in nexus.characters if c.startswith('hand_')]
         hand = [c for c in hand if CognateParser().is_unique_cognateset(c, labelled=True)]
         assert len(hand) == 1, 'Only expecting one unique character for hand'
-        assert self.nex.data['hand_u_2']['Iaai-471'] in ('0', '?'), \
+        assert nexus.data['hand_u_2']['Iaai-471'] in ('0', '?'), \
             'Iaai-471 should not be unique for `hand`'
     
 
-class TestNexusMakerAscertained(TestNexusMaker):
-    model = NexusMakerAscertained
+class TestNexusMakerComplexAscertained(TestNexusMakerComplex):
     expected_nchar = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES) + 1
+    
+    @pytest.fixture
+    def maker(self):
+        return NexusMakerAscertained(data=COMPLEX_TESTDATA)
 
 
-class TestNexusMakerAscertainedWords(TestNexusMaker):
-    model = NexusMakerAscertainedWords
+class TestNexusMakerComplexAscertainedWords(TestNexusMakerComplexAscertained):
     expected_nchar = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES) + 3
-
+    
+    @pytest.fixture
+    def maker(self):
+        return NexusMakerAscertainedWords(data=COMPLEX_TESTDATA)
 
