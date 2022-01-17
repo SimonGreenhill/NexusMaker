@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
 
-__version__ = 1.7
+__version__ = 2.0.0
 
 setup(
     name='nexusmaker',
