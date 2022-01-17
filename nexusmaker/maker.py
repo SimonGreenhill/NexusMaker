@@ -89,7 +89,7 @@ class NexusMaker(object):
 
             for rec in self.data:
                 if self.remove_loans and rec.is_loan:
-                    raise ValueError("%r is a loan!")
+                    raise ValueError("%r is a loan!" % rec)
 
                 for cog in self.cogparser.parse_cognate(rec.Cognacy):
                     if self.cogparser.is_unique_cognateset(cog):
@@ -102,9 +102,10 @@ class NexusMaker(object):
                         hascog.add((rec.get_taxon(), rec.Parameter))
 
             # now handle special casing of uniques.
-            # 1. If the language already has an entry for W that is cognate,
-            # then do nothing (i.e. we have identified the cognate forms,
-            # the new form is something else, but we don’t care).
+            # 1. If the language already has an entry for the parameter
+            # that is cognate, then do nothing (i.e. we have identified
+            # the cognate forms, the new form is something else, but we don’t
+            # care).
             #
             # 2. If none of the forms are cognate for that Parameter P then the
             # language is assigned ONE unique cognate set regardless of how many

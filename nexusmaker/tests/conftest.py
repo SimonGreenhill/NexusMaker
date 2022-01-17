@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 from nexusmaker import Record
 from nexusmaker import NexusMaker
@@ -5,6 +7,11 @@ from nexusmaker import NexusMakerAscertained
 from nexusmaker import NexusMakerAscertainedParameters
 
 
+@pytest.fixture
+def test_dir():
+    return Path(__file__).parent
+
+    
 @pytest.fixture(scope='class')
 def testdata():
     return [

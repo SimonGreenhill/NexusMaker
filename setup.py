@@ -30,7 +30,8 @@ setup(
     platforms='any',
     python_requires='>=3.7',
     install_requires=[
-        'python-nexus>=2.6.0'
+        'python-nexus>=2.6.0',
+        'pycldf>=1.24.0',
     ],
     extras_require={
         'dev': ['flake8', 'wheel', 'twine'],
