@@ -4,9 +4,9 @@ import unicodedata
 is_unique = re.compile(r"""^(.*)_(u_?\d+)$""")
 
 
-def parse_word(label, delimiter="_"):
+def parse_parameter(label, delimiter="_"):
     """
-    Returns a tuple of word, cognate_id.
+    Returns a tuple of parameter, cognate_id.
     """
     if is_unique.match(label):
         return is_unique.findall(label)[0]

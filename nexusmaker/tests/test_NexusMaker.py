@@ -10,10 +10,10 @@ def test_nexusmaker_input():
     # no language
     with pytest.raises(ValueError):
         NexusMaker([
-            Record(Word="leg", Item="", Cognacy="2")
+            Record(Parameter="leg", Item="", Cognacy="2")
         ])
 
-    # no word
+    # no parameter
     with pytest.raises(ValueError):
         NexusMaker([
             Record(Language="French", Item="", Cognacy="2")
@@ -21,9 +21,9 @@ def test_nexusmaker_input():
 
 
 def test_error_on_cognates_with_loans(testdata):
-    """Test that we generate an error if a loan word enters .cognates()"""
+    """Test that we generate an error if a loan enters .cognates()"""
     n = NexusMaker(testdata)
-    n.data.append(Record(Language="D", Word="eye", Item="", Cognacy="1", Loan=True))
+    n.data.append(Record(Language="D", Parameter="eye", Item="", Cognacy="1", Loan=True))
     with pytest.raises(ValueError):
         n.cognates
 
@@ -52,8 +52,8 @@ class TestNexusMaker:
     def test_languages(self, maker):
         assert maker.languages == {'A', 'B', 'C', 'D'}
 
-    def test_words(self, maker):
-        assert maker.words == {'eye', 'leg', 'arm'}
+    def test_parameters(self, maker):
+        assert maker.parameters == {'eye', 'leg', 'arm'}
 
     def test_nsites(self, nexus):
         assert len(nexus.data.keys()) == 6
@@ -66,24 +66,24 @@ class TestNexusMaker:
         assert ('arm', '2') in maker.cognates
         assert ('arm', '3') in maker.cognates
 
-    def test_is_missing_for_word(self, maker):
-        assert maker._is_missing_for_word('A', 'eye') == False
-        assert maker._is_missing_for_word('A', 'leg') == False
-        assert maker._is_missing_for_word('A', 'arm') == False
+    def test_is_missing_for_parameter(self, maker):
+        assert maker._is_missing_for_parameter('A', 'eye') == False
+        assert maker._is_missing_for_parameter('A', 'leg') == False
+        assert maker._is_missing_for_parameter('A', 'arm') == False
 
-        assert maker._is_missing_for_word('B', 'eye') == False
-        assert maker._is_missing_for_word('B', 'leg') == False
-        assert maker._is_missing_for_word('B', 'arm') == False
+        assert maker._is_missing_for_parameter('B', 'eye') == False
+        assert maker._is_missing_for_parameter('B', 'leg') == False
+        assert maker._is_missing_for_parameter('B', 'arm') == False
 
-        assert maker._is_missing_for_word('C', 'eye') == False
-        assert maker._is_missing_for_word('C', 'leg') == True, \
+        assert maker._is_missing_for_parameter('C', 'eye') == False
+        assert maker._is_missing_for_parameter('C', 'leg') == True, \
             "Should be missing 'leg' for Language 'C'"
-        assert maker._is_missing_for_word('C', 'arm') == False
+        assert maker._is_missing_for_parameter('C', 'arm') == False
 
-        assert maker._is_missing_for_word('D', 'eye') == True, \
+        assert maker._is_missing_for_parameter('D', 'eye') == True, \
             "Should be missing 'eye' for Language 'D' (loan)"
-        assert maker._is_missing_for_word('D', 'leg') == False
-        assert maker._is_missing_for_word('D', 'arm') == False
+        assert maker._is_missing_for_parameter('D', 'leg') == False
+        assert maker._is_missing_for_parameter('D', 'arm') == False
 
     def test_eye_1(self, nexus):
         cog = 'eye_1'

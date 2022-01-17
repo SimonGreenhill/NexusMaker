@@ -2,10 +2,10 @@ import pytest
 from nexusmaker.tests.test_NexusMaker import TestNexusMaker
 
 
-class TestNexusMakerAscertainedWords(TestNexusMaker):
+class TestNexusMakerAscertainedParameters(TestNexusMaker):
     @pytest.fixture
-    def maker(self, nexusmakerascwords):
-        return nexusmakerascwords
+    def maker(self, nexusmakerascparameters):
+        return nexusmakerascparameters
 
     def test_nsites(self, nexus):
         # 1 more site per word than in ascertainment is none:

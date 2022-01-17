@@ -3,7 +3,7 @@ import pytest
 from nexusmaker import Record
 from nexusmaker import NexusMaker
 from nexusmaker import NexusMakerAscertained
-from nexusmaker import NexusMakerAscertainedWords
+from nexusmaker import NexusMakerAscertainedParameters
 from nexusmaker import CognateParser
 
 RECORDS = """
@@ -160,7 +160,7 @@ RECORDS = """
 53558	036	Popti	00086	Kaufman_2003	cloud	asun	1
 """
 
-HEADER = ['ID', "LID", "Language", "SID", "Source", "Word", "Item", "Cognacy", "Loan"]
+HEADER = ['ID', "Language_ID", "Language", "SID", "Source", "Parameter", "Item", "Cognacy", "Loan"]
 COMPLEX_TESTDATA = [
     Record(**dict(zip(HEADER, r.split('\t')))) for r in RECORDS.split("\n") if len(r.strip())
 ]
@@ -240,8 +240,8 @@ class TestNexusMakerMayan:
             'Qeqchi_031', 'Sipakapeno_027', 'Chicomuceltec_002'
         }
 
-    def test_words(self, maker):
-        assert maker.words == {'cloud'}
+    def test_parameters(self, maker):
+        assert maker.parameters == {'cloud'}
 
     def test_ncognates(self, maker):
         assert len(maker.cognates) == self.expected_ncog
@@ -284,7 +284,7 @@ class TestNexusMakerMayanAscertained(TestNexusMakerMayan):
         return NexusMakerAscertained(data=COMPLEX_TESTDATA)
 
 
-class TestNexusMakerMayanAscertainedWords(TestNexusMakerMayanAscertained):
+class TestNexusMakerMayanAscertainedParameters(TestNexusMakerMayanAscertained):
     @pytest.fixture
     def maker(self):
-        return NexusMakerAscertainedWords(data=COMPLEX_TESTDATA)
+        return NexusMakerAscertainedParameters(data=COMPLEX_TESTDATA)

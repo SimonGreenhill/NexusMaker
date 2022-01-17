@@ -7,11 +7,11 @@ from nexusmaker import NexusMaker, Record
 
 def test_lru_cache():
     maker = NexusMaker(data=[
-        Record(Language="A", Word="eye", Item="", Cognacy="1"),
-        Record(Language="B", Word="eye", Item="", Cognacy="1"),
-        Record(Language="C", Word="eye", Item="", Cognacy="2"),
-        Record(Language="D", Word="eye", Item="", Cognacy="2"),
-        Record(Language="E", Word="eye", Item="", Cognacy=""),
+        Record(Language="A", Parameter="eye", Item="", Cognacy="1"),
+        Record(Language="B", Parameter="eye", Item="", Cognacy="1"),
+        Record(Language="C", Parameter="eye", Item="", Cognacy="2"),
+        Record(Language="D", Parameter="eye", Item="", Cognacy="2"),
+        Record(Language="E", Parameter="eye", Item="", Cognacy=""),
     ])
 
     assert ('eye', '1') in maker.cognates
@@ -22,7 +22,7 @@ def test_lru_cache():
     assert sorted(maker.cognates[('eye', '2')]) == ['C', 'D']
     assert sorted(maker.cognates[('eye', 'u_1')]) == ['E']
 
-    assert maker._is_missing_for_word('E', 'eye') == False
+    assert maker._is_missing_for_parameter('E', 'eye') == False
 
     nex = maker.make()
     assert nex.data['eye_1'] == {

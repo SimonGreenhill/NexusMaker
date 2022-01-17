@@ -3,7 +3,7 @@ import pytest
 from nexusmaker import Record
 from nexusmaker import NexusMaker
 from nexusmaker import NexusMakerAscertained
-from nexusmaker import NexusMakerAscertainedWords
+from nexusmaker import NexusMakerAscertainedParameters
 from nexusmaker import CognateParser
 
 RECORDS = """
@@ -48,7 +48,7 @@ def expand(r):  # make sure there are 5 columns in the record
 
 RECORDS = [expand(r.split("\t")) for r in RECORDS.split("\n") if len(r)]
 COMPLEX_TESTDATA = [
-    Record(Language=r[0], Word=r[2], Item=r[3], Cognacy=r[4])
+    Record(Language=r[0], Parameter=r[2], Item=r[3], Cognacy=r[4])
     for r in RECORDS
 ]
 
@@ -97,8 +97,8 @@ class TestNexusMakerComplex:
             'Iaai-471', 'Lamogai-67'
         }
 
-    def test_words(self, maker):
-        assert maker.words == {'hand', 'leg', 'five'}
+    def test_parameters(self, maker):
+        assert maker.parameters == {'hand', 'leg', 'five'}
 
     def test_ncognates(self, maker):
         assert len(maker.cognates) == self.expected_ncog
@@ -118,7 +118,7 @@ class TestNexusMakerComplex:
         for cog in obtained:
             assert len(maker.cognates[cog]) == 1, \
                 "Unique cognate %s should only have one member" % cog
-            # make key to look up EXPECTED_UNIQUES as (word, language)
+            # make key to look up EXPECTED_UNIQUES as (parameter, language)
             key = (cog[0], list(maker.cognates[cog])[0])
             # error on anything that is not expected
             assert key in expected, "%s unexpectedly seen as unique" % key
@@ -166,7 +166,7 @@ class TestNexusMakerComplex:
     def test_nexus_nchar(self, nexus):
         assert len(nexus.characters) == self.expected_nchar
 
-    def test_entries_with_a_cognate_word_arenot_added_as_unique(self, nexus):
+    def test_entries_with_a_cognate_in_the_same_parameter_arenot_added_as_unique(self, nexus):
         hand = [c for c in nexus.characters if c.startswith('hand_')]
         hand = [c for c in hand if CognateParser().is_unique_cognateset(c, labelled=True)]
         assert len(hand) == 1, 'Only expecting one unique character for hand'
@@ -182,9 +182,9 @@ class TestNexusMakerComplexAscertained(TestNexusMakerComplex):
         return NexusMakerAscertained(data=COMPLEX_TESTDATA)
 
 
-class TestNexusMakerComplexAscertainedWords(TestNexusMakerComplexAscertained):
+class TestNexusMakerComplexAscertainedParameters(TestNexusMakerComplexAscertained):
     expected_nchar = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES) + 3
 
     @pytest.fixture
     def maker(self):
-        return NexusMakerAscertainedWords(data=COMPLEX_TESTDATA)
+        return NexusMakerAscertainedParameters(data=COMPLEX_TESTDATA)

@@ -4,12 +4,12 @@ from functools import lru_cache
 from nexus import NexusWriter
 
 from .CognateParser import CognateParser
-from .tools import slugify, parse_word
+from .tools import slugify, parse_parameter
 
 
 class Record(object):
     def __init__(self, **kwargs):
-        defaults = ['ID', 'LID', 'Language', 'WID', 'Word', 'Item', 'Loan', 'Cognacy']
+        defaults = ['ID', 'Language_ID', 'Language', 'Parameter_ID', 'Parameter', 'Item', 'Loan', 'Cognacy']
         for key in defaults:
             setattr(self, key, None)
         for key in kwargs:
@@ -17,7 +17,7 @@ class Record(object):
 
     def __repr__(self):
         return "<Record %s - %s - %s - %s>" % (
-            self.ID, self.Language, self.Word, self.Item
+            self.ID, self.Language, self.Parameter, self.Item
         )
 
     @property
@@ -32,10 +32,10 @@ class Record(object):
             return True
 
     def get_taxon(self):
-        if self.LID is None:
+        if self.Language_ID is None:
             return slugify(self.Language)
         else:
-            return "%s_%s" % (slugify(self.Language), str(self.LID))
+            return "%s_%s" % (slugify(self.Language), str(self.Language_ID))
 
 
 class NexusMaker(object):
@@ -44,7 +44,7 @@ class NexusMaker(object):
         self.data = [self._check(r) for r in data]
         self.cogparser = cogparser if cogparser else CognateParser(strict=True, uniques=True)
 
-        # loan words
+        # loans
         self.remove_loans = remove_loans
         if self.remove_loans:
             self.data = [r for r in data if not r.is_loan]
@@ -53,15 +53,15 @@ class NexusMaker(object):
         """Checks that all records have the keys we need"""
         if getattr(record, 'Language', None) is None:
             raise ValueError("record has no `Language` %r" % record)
-        if getattr(record, 'Word', None) is None:
-            raise ValueError("record has no `Word` %r" % record)
+        if getattr(record, 'Parameter', None) is None:
+            raise ValueError("record has no `Parameter` %r" % record)
         return record
 
     @lru_cache(maxsize=None)
-    def _is_missing_for_word(self, language, word):
-        """Returns True if the given `language` has no cognates for `word`"""
+    def _is_missing_for_parameter(self, language, parameter):
+        """Returns True if the given `language` has no cognates for `parameter`"""
         cogs = [
-            c for c in self._cognates if c[0] == word and language in self._cognates[c]
+            c for c in self._cognates if c[0] == parameter and language in self._cognates[c]
         ]
         return len(cogs) == 0
 
@@ -72,59 +72,60 @@ class NexusMaker(object):
         return self._languages
 
     @property
-    def words(self):
-        if not hasattr(self, '_words'):
-            self._words = {r.Word for r in self.data}
-        return self._words
+    def parameters(self):
+        if not hasattr(self, '_parameters'):
+            self._parameters = {r.Parameter for r in self.data}
+        return self._parameters
 
     @property
     def cognates(self):
         if not hasattr(self, '_cognates'):
-            self._cognates = {}  # cognate sets (word, cogstate)
-            # unique sets (language, word)
+            self._cognates = {}  # cognate sets (parameter, cogstate)
+            # unique sets (language, parameter)
             uniques = {}
-            # set of (language, word) pairs where a language already has a
+            # set of (language, parameter) pairs where a language already has a
             # cognate -- used for correct handling of uniques below.
             hascog = set()
 
             for rec in self.data:
                 if self.remove_loans and rec.is_loan:
-                    raise ValueError("%r is a loan word!")
+                    raise ValueError("%r is a loan!")
 
                 for cog in self.cogparser.parse_cognate(rec.Cognacy):
                     if self.cogparser.is_unique_cognateset(cog):
-                        uniques[(rec.get_taxon(), rec.Word)] = cog
+                        uniques[(rec.get_taxon(), rec.Parameter)] = cog
                     else:
                         # add cognate
-                        coglabel = (rec.Word, cog)
+                        coglabel = (rec.Parameter, cog)
                         self._cognates[coglabel] = self._cognates.get(coglabel, set())
                         self._cognates[coglabel].add(rec.get_taxon())
-                        hascog.add((rec.get_taxon(), rec.Word))
+                        hascog.add((rec.get_taxon(), rec.Parameter))
 
             # now handle special casing of uniques.
             # 1. If the language already has an entry for W that is cognate,
             # then do nothing (i.e. we have identified the cognate forms,
             # the new form is something else, but we don’t care).
             #
-            # 2. If none of the forms are cognate for that word W then the
+            # 2. If none of the forms are cognate for that Parameter P then the
             # language is assigned ONE unique cognate set regardless of how many
-            # records there are in the database for that word in that language,
-            # i.e. we know it’s evolved a new cognate set, and it could be any
-            # one of the other forms, but we don’t care which form.
-            for (lang, word) in sorted(uniques):
-                if (lang, word) not in hascog:
-                    cog = uniques[(lang, word)]
-                    assert (word, cog) not in self._cognates
-                    self._cognates[(word, cog)] = set([lang])
-                    hascog.add((lang, word))
+            # records there are in the database for that parameter in that
+            # language i.e. we know it’s evolved a new cognate set, and 
+            # it could be any one of the other forms, but we don’t care which
+            # form.
+            for (lang, parameter) in sorted(uniques):
+                if (lang, parameter) not in hascog:
+                    cog = uniques[(lang, parameter)]
+                    assert (parameter, cog) not in self._cognates
+                    self._cognates[(parameter, cog)] = set([lang])
+                    hascog.add((lang, parameter))
         return self._cognates
 
     @lru_cache(maxsize=1024)
-    def make_slug(self, word):
-        return slugify(word.lower().replace(" ", "").replace("_", ""))
+    def make_slug(self, parameter):
+        return slugify(parameter.lower().replace(" ", "").replace("_", ""))
 
-    def make_coglabel(self, word, cog):
-        return "%s_%s" % (self.make_slug(word), cog)
+    def make_coglabel(self, parameter, cog):
+        return "%s_%s" % (self.make_slug(parameter), cog)
 
     def make(self):
         nex = NexusWriter()
@@ -139,7 +140,7 @@ class NexusMaker(object):
             for lang in self.languages:
                 if lang in self.cognates[cog]:
                     value = '1'
-                elif self._is_missing_for_word(lang, cog[0]):
+                elif self._is_missing_for_parameter(lang, cog[0]):
                     value = '?'
                 else:
                     value = '0'
@@ -148,8 +149,7 @@ class NexusMaker(object):
         nex = self._add_ascertainment(nex)  # handle ascertainment
         return nex
 
-    def _add_ascertainment(self, nex):
-        # subclass this to extend
+    def _add_ascertainment(self, nex):  # subclass this to extend
         return nex
 
     def display_cognates(self):  # pragma: no cover
@@ -181,19 +181,19 @@ class NexusMakerAscertained(NexusMaker):
         return nex
 
 
-class NexusMakerAscertainedWords(NexusMaker):
+class NexusMakerAscertainedParameters(NexusMaker):
 
     ASCERTAINMENT_LABEL = '0ascertainment'
 
     def _add_ascertainment(self, nex):
-        """Adds an ascertainment character per word"""
-        for word in self.words:
-            coglabel = self.make_coglabel(word, self.ASCERTAINMENT_LABEL)
+        """Adds an ascertainment character per parameter"""
+        for parameter in self.parameters:
+            coglabel = self.make_coglabel(parameter, self.ASCERTAINMENT_LABEL)
             if coglabel in nex.data:  # pragma: no cover
                 raise ValueError('Duplicate ascertainment key "%s"!' % coglabel)
 
             for lang in self.languages:
-                if self._is_missing_for_word(lang, word):
+                if self._is_missing_for_parameter(lang, parameter):
                     nex.add(slugify(lang), coglabel, '?')
                 else:
                     nex.add(slugify(lang), coglabel, '0')
@@ -203,8 +203,8 @@ class NexusMakerAscertainedWords(NexusMaker):
         """Find all characters"""
         chars = defaultdict(list)
         for site_id, label in enumerate(sorted(nex.data.keys())):
-            word, cogid = parse_word(label, delimiter)
-            chars[word].append(site_id)
+            parameter, cogid = parse_parameter(label, delimiter)
+            chars[parameter].append(site_id)
         return chars
 
     def _is_sequential(self, siteids):
