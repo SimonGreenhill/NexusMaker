@@ -67,21 +67,18 @@ EXPECTED_COGNATES = {
     ('hand', '14'): {'Iaai-471'},
     ('hand', '45'): {'Lamogai-67'},
     ('leg', '1'): {'Lamogai-67'},
+    ('leg', 'u_1'): {'Banoni-4'},
+    ('hand', 'u_2'): {'Dehu-196'},
+    ('leg', 'u_4'): {'Iaai-471'},
+    ('five', 'u_6'): {'Iaai-471'},
 }
-
-EXPECTED_UNIQUES = [
-    ('leg', 'Banoni-4'),
-    ('hand', 'Dehu-196'),
-    ('leg', 'Iaai-471'),
-    ('five', 'Iaai-471'),
-]
 
 
 class TestNexusMakerComplex:
     # number of cognate sets expected
-    expected_ncog = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES)
+    expected_ncog = len(EXPECTED_COGNATES)
     # number of characters expected in the nexus file
-    expected_nchar = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES)
+    expected_nchar = len(EXPECTED_COGNATES)
 
     @pytest.fixture
     def maker(self):
@@ -90,7 +87,7 @@ class TestNexusMakerComplex:
     @pytest.fixture
     def nexus(self, maker):
         return maker.make()
-
+    
     def test_languages(self, maker):
         assert maker.languages == {
             'Aiwoo-501', 'Banoni-4', 'Dehu-196', 'Eton-1088', 'Hiw-639',
@@ -103,31 +100,14 @@ class TestNexusMakerComplex:
     def test_ncognates(self, maker):
         assert len(maker.cognates) == self.expected_ncog
 
-    def test_cognate_sets(self, maker):
-        for ecog in EXPECTED_COGNATES:
-            assert ecog in maker.cognates, "Missing %s" % ecog
-            obtained = maker.cognates.get(ecog, set())
-            assert obtained == EXPECTED_COGNATES[ecog], \
-                "Cognate set %s incorrect %r != %r" % (
-                    ecog, EXPECTED_COGNATES[ecog], obtained)
-
-    def test_uniques(self, maker):
-        obtained = [c for c in maker.cognates if 'u' in c[1]]
-        expected = {e: 0 for e in EXPECTED_UNIQUES}
-        # check what has been identified as unique
-        for cog in obtained:
-            assert len(maker.cognates[cog]) == 1, \
-                "Unique cognate %s should only have one member" % cog
-            # make key to look up EXPECTED_UNIQUES as (parameter, language)
-            key = (cog[0], list(maker.cognates[cog])[0])
-            # error on anything that is not expected
-            assert key in expected, "%s unexpectedly seen as unique" % key
-            expected[key] += 1
-
-        # the counts for each expected cognate should be max 1.
-        for e in expected:
-            assert expected[e] == 1, \
-                "Expected 1 cognate for %s, but got %d" % (e, expected[e])
+    @pytest.mark.parametrize("key,members",
+        [(e, EXPECTED_COGNATES[e]) for e in EXPECTED_COGNATES]
+    )
+    def test_cognate_sets(self, maker, key, members):
+        assert key in maker.cognates, "Missing %s" % key
+        obtained = maker.cognates.get(key, set())
+        assert obtained == members, \
+            "Cognate set %s incorrect %r != %r" % (key, members, obtained)
 
     def test_dehu_is_all_missing_for_leg(self, nexus):
         for cog in [cog for cog in nexus.data if cog.startswith('leg_')]:
@@ -152,16 +132,9 @@ class TestNexusMakerComplex:
     def test_nexus_taxa(self, maker, nexus):
         assert maker.languages == nexus.taxa
 
-    def test_nexus_characters_expected_cognates(self, nexus):
-        for e in EXPECTED_COGNATES:
-            assert "_".join(e) in nexus.characters
-
-    def test_nexus_characters_expected_uniques(self, nexus):
-        uniques = [
-            c for c in nexus.characters if
-            CognateParser().is_unique_cognateset(c, labelled=True)
-        ]
-        assert len(uniques) == len(EXPECTED_UNIQUES)
+    @pytest.mark.parametrize("label", EXPECTED_COGNATES.keys())
+    def test_nexus_characters_expected_cognates(self, nexus, label):
+        assert "_".join(label) in nexus.characters
 
     def test_nexus_nchar(self, nexus):
         assert len(nexus.characters) == self.expected_nchar
@@ -175,7 +148,7 @@ class TestNexusMakerComplex:
 
 
 class TestNexusMakerComplexAscertained(TestNexusMakerComplex):
-    expected_nchar = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES) + 1
+    expected_nchar = len(EXPECTED_COGNATES) + 1
 
     @pytest.fixture
     def maker(self):
@@ -183,7 +156,7 @@ class TestNexusMakerComplexAscertained(TestNexusMakerComplex):
 
 
 class TestNexusMakerComplexAscertainedParameters(TestNexusMakerComplexAscertained):
-    expected_nchar = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES) + 3
+    expected_nchar = len(EXPECTED_COGNATES) + 3
 
     @pytest.fixture
     def maker(self):

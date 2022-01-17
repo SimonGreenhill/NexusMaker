@@ -209,8 +209,6 @@ EXPECTED_COGNATES[('cloud', '6')] = EXPECTED_COGNATES[('cloud', '6')] | EXPECTED
 EXPECTED_COGNATES[('cloud', '6')] = EXPECTED_COGNATES[('cloud', '6')] | EXPECTED_COGNATES[('cloud', '6d')]
 EXPECTED_COGNATES[('cloud', '6')] = EXPECTED_COGNATES[('cloud', '6')] | EXPECTED_COGNATES[('cloud', '6e')]
 
-EXPECTED_UNIQUES = []
-
 
 class TestNexusMakerMayan:
     @pytest.fixture
@@ -222,9 +220,9 @@ class TestNexusMakerMayan:
         return maker.make()
 
     # number of cognate sets expected
-    expected_ncog = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES)
+    expected_ncog = len(EXPECTED_COGNATES)
     # number of characters expected in the nexus file
-    expected_nchar = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES)
+    expected_nchar = len(EXPECTED_COGNATES)
 
     def test_languages(self, maker):
         assert maker.languages == {
@@ -246,14 +244,14 @@ class TestNexusMakerMayan:
     def test_ncognates(self, maker):
         assert len(maker.cognates) == self.expected_ncog
 
-    def test_cognate_sets(self, maker):
-        for ecog in EXPECTED_COGNATES:
-            assert ecog in maker.cognates, "Missing %s" % ecog
-            assert maker.cognates.get(ecog, set()) == EXPECTED_COGNATES[ecog], \
-                "Cognate set %s incorrect %r != %r" % (
-                    ecog,
-                    EXPECTED_COGNATES[ecog],
-                    maker.cognates.get(ecog, set()))
+    @pytest.mark.parametrize("key,members",
+        [(e, EXPECTED_COGNATES[e]) for e in EXPECTED_COGNATES]
+    )
+    def test_cognate_sets(self, maker, key, members):
+        assert key in maker.cognates, "Missing %s" % key
+        obtained = maker.cognates.get(key, set())
+        assert obtained == members, \
+            "Cognate set %s incorrect %r != %r" % (key, members, obtained)
 
     def test_nexus_symbols(self, nexus):
         assert sorted(nexus.symbols) == sorted(['0', '1'])
@@ -261,23 +259,24 @@ class TestNexusMakerMayan:
     def test_nexus_taxa(self, maker, nexus):
         assert maker.languages == nexus.taxa
 
-    def test_nexus_characters_expected_cognates(self, nexus):
-        for e in EXPECTED_COGNATES:
-            assert "_".join(e) in nexus.characters
+    @pytest.mark.parametrize("label", EXPECTED_COGNATES.keys())
+    def test_nexus_characters_expected_cognates(self, nexus, label):
+        assert "_".join(label) in nexus.characters
 
     def test_nexus_characters_expected_uniques(self, nexus):
+        # should be none
         uniques = [
             c for c in nexus.characters if
             CognateParser().is_unique_cognateset(c, labelled=True)
         ]
-        assert len(uniques) == len(EXPECTED_UNIQUES)
+        assert len(uniques) == 0
 
     def test_nexus_nchar(self, nexus):
         assert len(nexus.characters) == self.expected_nchar
 
 
 class TestNexusMakerMayanAscertained(TestNexusMakerMayan):
-    expected_nchar = len(EXPECTED_COGNATES) + len(EXPECTED_UNIQUES) + 1
+    expected_nchar = len(EXPECTED_COGNATES) + 1
 
     @pytest.fixture
     def maker(self):
