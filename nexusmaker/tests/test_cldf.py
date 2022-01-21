@@ -81,7 +81,7 @@ def cldf_metadata(test_dir):
 
 @pytest.fixture
 def cldf_records(cldf_metadata):
-    return list(load_cldf(cldf_metadata))
+    return list(load_cldf(cldf_metadata, table='ValueTable'))
 
 
 
