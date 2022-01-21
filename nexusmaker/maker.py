@@ -163,8 +163,8 @@ class NexusMaker(object):
 
         if filename is None:
             return nex.write(charblock=True)
-        else:  # pragma: no cover
-            return nex.write_to_file(filename=filename, charblock=True)
+        else:
+            return nex.write_to_file(filename, charblock=True)
 
 
 class NexusMakerAscertained(NexusMaker):
@@ -237,7 +237,7 @@ class NexusMakerAscertainedParameters(NexusMaker):
         if filename is None:
             return nex.write(charblock=True) + "\n\n" + "\n".join(self.create_assumptions(nex))
         else:  # pragma: no cover
-            nex.write_to_file(filename=filename, charblock=True)
+            nex.write_to_file(filename, charblock=True)
             with open(filename, 'a', encoding='utf8') as handle:
                 handle.write("\n")
                 for line in self.create_assumptions(nex):
