@@ -133,3 +133,14 @@ class TestNexusMaker:
         assert 'NTAX=4' in out
         assert 'CHARSTATELABELS' in out
         assert 'MATRIX' in out
+    
+    def test_write_to_file(self, tmp_path, maker):
+        maker.write(filename=tmp_path / 'test.nex')
+        with open(tmp_path / 'test.nex') as handle:
+            content = handle.read()
+        
+        assert content.lstrip().startswith("#NEXUS")
+        assert 'NTAX=4' in content
+        assert 'CHARSTATELABELS' in content
+        assert 'MATRIX' in content
+        
