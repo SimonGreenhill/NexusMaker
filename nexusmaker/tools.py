@@ -42,3 +42,28 @@ def natsort(alist):
         return [convert(c) for c in re.split('([0-9]+)', key)]
 
     return sorted(alist, key=alphanum_key)
+
+
+def remove_combining_cognates(maker, keep=1):
+    """
+    Removes combined cognate sets to the given threshold.
+    
+    If a language has multiple cognates for a parameter, then this will filter
+    the cognates to a maximum of `keep`, i.e. if a language has cognate sets
+    "a, b, c" for the word `hand`, then `keep=2` will leave the top 2 cognates
+    (="a, b"), while `keep=1` will leave the top cognate set (="a").
+    
+    Note that the order of the cognate sets here is defined by the number of
+    languages that have the relevant set. So in the case of "a, b, c" if there
+    are 5 * "a", 10 * "c" and 20 * "b", the order will be ["b", "c", "a"], and 
+    cognates will be removed from the right to match the `keep` parameter.
+    """
+    print(maker.cognates)
+    # calculate sizes
+    sizes = {k: len(maker.cognates[k]) for k in maker.cognates}
+    print(sizes)
+    # loop over parameters and 
+    for p in maker.parameters:
+        pcogs = [(sizes[k], k) for k in maker.cognates if k[0] == p]
+        print(p, pcogs)
+    
