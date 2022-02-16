@@ -47,23 +47,33 @@ def natsort(alist):
 def remove_combining_cognates(maker, keep=1):
     """
     Removes combined cognate sets to the given threshold.
-    
+
     If a language has multiple cognates for a parameter, then this will filter
     the cognates to a maximum of `keep`, i.e. if a language has cognate sets
     "a, b, c" for the word `hand`, then `keep=2` will leave the top 2 cognates
     (="a, b"), while `keep=1` will leave the top cognate set (="a").
-    
+
     Note that the order of the cognate sets here is defined by the number of
     languages that have the relevant set. So in the case of "a, b, c" if there
-    are 5 * "a", 10 * "c" and 20 * "b", the order will be ["b", "c", "a"], and 
+    are 5 * "a", 10 * "c" and 20 * "b", the order will be ["b", "c", "a"], and
     cognates will be removed from the right to match the `keep` parameter.
     """
-    print(maker.cognates)
     # calculate sizes
     sizes = {k: len(maker.cognates[k]) for k in maker.cognates}
-    print(sizes)
-    # loop over parameters and 
-    for p in maker.parameters:
-        pcogs = [(sizes[k], k) for k in maker.cognates if k[0] == p]
-        print(p, pcogs)
-    
+
+    # loop over lexemes and remove excess
+    for rec in maker.data:
+        cog = maker.cogparser.parse_cognate(rec.Cognacy)
+        if len(cog) > keep:  # handle combined characters above threshold
+            # decorate sort undecorate
+            cog = [(sizes[maker.get_coglabel(rec, c)], c) for c in cog]
+            # lambda key for sorting sorts by +size, -cognate number
+            cog = [
+                c[1] for c in sorted(cog, key=lambda x:(-x[0], natsort(x[1])))
+            ]
+            rec.Cognacy = ",".join(cog[0:keep])
+
+    # force regeneration of cognate sets
+    del(maker._cognates)
+    maker.cognates
+    return maker
