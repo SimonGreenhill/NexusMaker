@@ -3,7 +3,8 @@ from nexusmaker import Record
 
 def test_simple():
     r = Record(
-        ID=1, Parameter_ID=2, Language_ID=3, Language='English', Parameter='Hand', Item='hand',
+        ID=1, Parameter_ID=2, Language_ID=3,
+        Language='English', Parameter='Hand', Item='hand',
         Annotation='?', Cognacy=None, Loan="L"
     )
     assert r.ID == 1
@@ -14,7 +15,7 @@ def test_simple():
     assert r.Item == 'hand'
     assert r.Annotation == '?'
     assert r.Loan == "L"
-    assert r.Cognacy == None
+    assert r.Cognacy is None
 
 
 def test_is_loan():
@@ -31,12 +32,14 @@ def test_is_loan():
 
 def test_get_token():
     r = Record(
-        ID=1, Parameter_ID=2, Language_ID=3, Language='English', Parameter='Hand', Item='hand',
+        ID=1, Parameter_ID=2, Language_ID=3,
+        Language='English', Parameter='Hand', Item='hand',
         Annotation='?', Cognacy=None, Loan="L"
     )
     assert r.get_taxon() == "English_3"
     r = Record(
-        ID=1, Parameter_ID=2, Language_ID=None, Language='English', Parameter='Hand', Item='hand',
+        ID=1, Parameter_ID=2, Language_ID=None,
+        Language='English', Parameter='Hand', Item='hand',
         Annotation='?', Cognacy=None, Loan="L"
     )
     assert r.get_taxon() == "English"

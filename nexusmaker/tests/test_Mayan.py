@@ -160,31 +160,37 @@ RECORDS = """
 53558	036	Popti	00086	Kaufman_2003	cloud	asun	1
 """
 
-HEADER = ['ID', "Language_ID", "Language", "SID", "Source", "Parameter", "Item", "Cognacy", "Loan"]
+HEADER = [
+    'ID', "Language_ID", "Language", "SID", "Source", "Parameter", "Item",
+    "Cognacy", "Loan"
+]
 COMPLEX_TESTDATA = [
-    Record(**dict(zip(HEADER, r.split('\t')))) for r in RECORDS.split("\n") if len(r.strip())
+    Record(**dict(zip(HEADER, r.split('\t')))) for r in RECORDS.split("\n")
+    if len(r.strip())
 ]
 
-EXPECTED_COGNATES = {
+EXPECTED = {
     ('cloud', '1'): {
-        'Tojolabal_012', 'Chuj_013', 'Mocho_017', 'Jakalteko_014', 'Qanjobal_016',
-        'Akateco_015', 'Tuzanteco_037', 'Popti_036'
+        'Tojolabal_012', 'Chuj_013', 'Mocho_017', 'Jakalteko_014',
+        'Qanjobal_016', 'Akateco_015', 'Tuzanteco_037', 'Popti_036'
     },
     ('cloud', '2'): {
-        'Achi_025', 'Kaqchikel_022', 'Poqomam_029', 'Sakapulteko_026', 'Ixil_021',
-        'Kiche_024', 'Poqomchi_030', 'Tzutujil_023', 'Uspanteko_028'
+        'Achi_025', 'Kaqchikel_022', 'Poqomam_029', 'Sakapulteko_026',
+        'Ixil_021', 'Kiche_024', 'Poqomchi_030', 'Tzutujil_023',
+        'Uspanteko_028'
     },
     ('cloud', '2b'): {'Qanjobal_016'},
 
     ('cloud', '3'): {'Awakateko_020'},
     ('cloud', '4'): {'Chicomuceltec_002'},
     ('cloud', '5'): {
-        'Tzeltal_010', 'Chorti_007', 'Tzotzil_011', 'Qeqchi_031', 'Chol_008',
-        'Classical_Maya_033',
+        'Tzeltal_010', 'Chorti_007', 'Tzotzil_011', 'Qeqchi_031',
+        'Chol_008', 'Classical_Maya_033',
     },
     ('cloud', '5b'): {'Huastec_001'},
     ('cloud', '6'): {
-        'Jakalteko_014', 'Tzutujil_023', 'Mocho_017', 'Cholti_032', 'Kiche_024',
+        'Jakalteko_014', 'Tzutujil_023', 'Mocho_017', 'Cholti_032',
+        'Kiche_024'
     },
     ('cloud', '6b'): {'Kiche_024'},
     ('cloud', '6c'): {
@@ -202,12 +208,12 @@ EXPECTED_COGNATES = {
 # COMBINED COGNATE SETS
 # (i.e. we need to merge in the extra items so that a language coded as
 # "2b" is also present in set "2"
-EXPECTED_COGNATES[('cloud', '2')] = EXPECTED_COGNATES[('cloud', '2')] | EXPECTED_COGNATES[('cloud', '2b')]
-EXPECTED_COGNATES[('cloud', '5')] = EXPECTED_COGNATES[('cloud', '5')] | EXPECTED_COGNATES[('cloud', '5b')]
-EXPECTED_COGNATES[('cloud', '6')] = EXPECTED_COGNATES[('cloud', '6')] | EXPECTED_COGNATES[('cloud', '6b')]
-EXPECTED_COGNATES[('cloud', '6')] = EXPECTED_COGNATES[('cloud', '6')] | EXPECTED_COGNATES[('cloud', '6c')]
-EXPECTED_COGNATES[('cloud', '6')] = EXPECTED_COGNATES[('cloud', '6')] | EXPECTED_COGNATES[('cloud', '6d')]
-EXPECTED_COGNATES[('cloud', '6')] = EXPECTED_COGNATES[('cloud', '6')] | EXPECTED_COGNATES[('cloud', '6e')]
+EXPECTED[('cloud', '2')] = EXPECTED[('cloud', '2')] | EXPECTED[('cloud', '2b')]
+EXPECTED[('cloud', '5')] = EXPECTED[('cloud', '5')] | EXPECTED[('cloud', '5b')]
+EXPECTED[('cloud', '6')] = EXPECTED[('cloud', '6')] | EXPECTED[('cloud', '6b')]
+EXPECTED[('cloud', '6')] = EXPECTED[('cloud', '6')] | EXPECTED[('cloud', '6c')]
+EXPECTED[('cloud', '6')] = EXPECTED[('cloud', '6')] | EXPECTED[('cloud', '6d')]
+EXPECTED[('cloud', '6')] = EXPECTED[('cloud', '6')] | EXPECTED[('cloud', '6e')]
 
 
 class TestNexusMakerMayan:
@@ -220,9 +226,9 @@ class TestNexusMakerMayan:
         return maker.make()
 
     # number of cognate sets expected
-    expected_ncog = len(EXPECTED_COGNATES)
+    expected_ncog = len(EXPECTED)
     # number of characters expected in the nexus file
-    expected_nchar = len(EXPECTED_COGNATES)
+    expected_nchar = len(EXPECTED)
 
     def test_languages(self, maker):
         assert maker.languages == {
@@ -244,9 +250,7 @@ class TestNexusMakerMayan:
     def test_ncognates(self, maker):
         assert len(maker.cognates) == self.expected_ncog
 
-    @pytest.mark.parametrize("key,members",
-        [(e, EXPECTED_COGNATES[e]) for e in EXPECTED_COGNATES]
-    )
+    @pytest.mark.parametrize("key,members", [(e, EXPECTED[e]) for e in EXPECTED])
     def test_cognate_sets(self, maker, key, members):
         assert key in maker.cognates, "Missing %s" % key
         obtained = maker.cognates.get(key, set())
@@ -259,8 +263,8 @@ class TestNexusMakerMayan:
     def test_nexus_taxa(self, maker, nexus):
         assert maker.languages == nexus.taxa
 
-    @pytest.mark.parametrize("label", EXPECTED_COGNATES.keys())
-    def test_nexus_characters_expected_cognates(self, nexus, label):
+    @pytest.mark.parametrize("label", EXPECTED.keys())
+    def test_nexus_characters_EXPECTED(self, nexus, label):
         assert "_".join(label) in nexus.characters
 
     def test_nexus_characters_expected_uniques(self, nexus):
@@ -276,7 +280,7 @@ class TestNexusMakerMayan:
 
 
 class TestNexusMakerMayanAscertained(TestNexusMakerMayan):
-    expected_nchar = len(EXPECTED_COGNATES) + 1
+    expected_nchar = len(EXPECTED) + 1
 
     @pytest.fixture
     def maker(self):

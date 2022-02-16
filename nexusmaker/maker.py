@@ -39,6 +39,11 @@ class Record(object):
 
 
 class NexusMaker(object):
+    """
+    data = list of Record instances
+    cogparser = a specified CognateParser instance (default=None).
+    remove_loans = remove loan words (default=True)
+    """
 
     def __init__(self, data, cogparser=None, remove_loans=True):
         self.data = [self._check(r) for r in data]
@@ -57,9 +62,14 @@ class NexusMaker(object):
             raise ValueError("record has no `Parameter` %r" % record)
         return record
 
+    def get_coglabel(self, record, value):
+        return (record.Parameter, value)
+
     @lru_cache(maxsize=None)
     def _is_missing_for_parameter(self, language, parameter):
-        """Returns True if the given `language` has no cognates for `parameter`"""
+        """
+        Returns True if the given `language` has no cognates for `parameter`
+        """
         cogs = [
             c for c in self._cognates if c[0] == parameter and language in self._cognates[c]
         ]
@@ -80,7 +90,8 @@ class NexusMaker(object):
     @property
     def cognates(self):
         if not hasattr(self, '_cognates'):
-            self._cognates = {}  # cognate sets (parameter, cogstate)
+            # cognate sets (parameter, cogstate)
+            self._cognates = defaultdict(set)
             # unique sets (language, parameter)
             uniques = {}
             # set of (language, parameter) pairs where a language already has a
@@ -96,9 +107,9 @@ class NexusMaker(object):
                         uniques[(rec.get_taxon(), rec.Parameter)] = cog
                     else:
                         # add cognate
-                        coglabel = (rec.Parameter, cog)
-                        self._cognates[coglabel] = self._cognates.get(coglabel, set())
-                        self._cognates[coglabel].add(rec.get_taxon())
+                        self._cognates[self.get_coglabel(rec, cog)].add(
+                            rec.get_taxon()
+                        )
                         hascog.add((rec.get_taxon(), rec.Parameter))
 
             # now handle special casing of uniques.

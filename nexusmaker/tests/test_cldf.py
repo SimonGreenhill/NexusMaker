@@ -7,68 +7,68 @@ from nexusmaker import NexusMakerAscertainedParameters
 
 
 EXPECTED_COGNATES = {
-#   85  1_hand            ringa(ringa)     1, 64, 34         111 // filterable
-#  763  1_hand                    rika         1, 64         110
-# 1636  1_hand                    rima         1, 64         110
+    #   85  1_hand        ringa(ringa)     1, 64, 34         111 // filterable
+    #  763  1_hand            rika         1, 64         110
+    # 1636  1_hand            rima         1, 64         110
     ('hand', '1'): {'Maori_85', 'South_Island_Maori_763', 'Tahitian_1636'},
     ('hand', '34'): {'Maori_85'},
     ('hand', '64'): {'Maori_85', 'South_Island_Maori_763', 'Tahitian_1636'},
 
-#   85    3_right                   katau         5, 40       101
-#   85    3_right                   matau         5, 13       110
-# 1636    3_right                   'atau          5,40       101
+    #   85    3_right        katau         5, 40       101
+    #   85    3_right        matau         5, 13       110
+    # 1636    3_right        'atau          5,40       101
     ('right', '5'): {'Maori_85', 'Tahitian_1636'},
     ('right', '13'): {'Maori_85'},
     ('right', '40'): {'Maori_85', 'Tahitian_1636'},
 
-#   85   23_blood                    toto             4       1
-#  763   23_blood                    toto             4       1
-# 1636   23_blood                    toto             4       1
+    #   85   23_blood           toto             4       1
+    #  763   23_blood           toto             4       1
+    # 1636   23_blood           toto             4       1
     ('blood', '4'): {'Maori_85', 'South_Island_Maori_763', 'Tahitian_1636'},
 
-#   85  39_tocook                     tao            10       10
-#  763  39_tocook                    pupu                     .
-#  763  39_tocook                   taona            10       10
-#  763  39_tocook                tao(-na)            10       XXXDUPE
-# 1636  39_tocook                    tunu             9       01
-# 1636  39_tocook                  fa'a'ā            2?       .. DOUBT
+    #   85  39_tocook            tao            10       10
+    #  763  39_tocook           pupu                     .
+    #  763  39_tocook          taona            10       10
+    #  763  39_tocook       tao(-na)            10       XXXDUPE
+    # 1636  39_tocook           tunu             9       01
+    # 1636  39_tocook         fa'a'ā            2?       .. DOUBT
     ('to cook', '9'): {'Tahitian_1636'},
     ('to cook', '10'): {'Maori_85', 'South_Island_Maori_763'},
     # 'pupu' not unique as 763 already in ('to cook', '10')
     # 'fa'a'ā' not unique as 1636 already in ('to cook', '9')
 
-#   85       45_eye                    mata             1       10
-# 1636       45_eye                    mata             1       10
-#  763       45_eye                  konohi             4       01
+    #   85       45_eye       mata             1       10
+    # 1636       45_eye       mata             1       10
+    #  763       45_eye     konohi             4       01
     ('eye', '1'): {'Maori_85','Tahitian_1636'},
     ('eye', '4'): {'South_Island_Maori_763'},
 
-#   85    68_needle                   ngira           LOAN      ??
-#  763    68_needle                     tui            66       01
-# 1636    68_needle                      au             1       10
-# 1636    68_needle                    nira           LOAN      XX
+    #   85    68_needle       ngira           LOAN      ??
+    #  763    68_needle         tui            66       01
+    # 1636    68_needle          au             1       10
+    # 1636    68_needle        nira           LOAN      XX
     ('needle', '1'): {'Tahitian_1636'},
     ('needle', '66'): {'South_Island_Maori_763'},
 
-#   85    104_fatgrease                   ngako            14       01
-#  763    104_fatgrease                   ihinu            12       10
-# 1636    104_fatgrease                    'a'o            14       01
-# 1636    104_fatgrease                   poria                     u
+    #   85    104_fatgrease       ngako            14       01
+    #  763    104_fatgrease       ihinu            12       10
+    # 1636    104_fatgrease        'a'o            14       01
+    # 1636    104_fatgrease       poria                     u
     ('fat/grease', '12'): {'South_Island_Maori_763'},
     ('fat/grease', '14'): {'Maori_85', 'Tahitian_1636'},
     # 'poria' not unique as 1636 already in set ('fat/grease', '14')
-    
-#   85     120_stone                koowhatu          1,39       1001
-#  763     120_stone                   boatu          1,19       1010
-# 1636     120_stone                  'ōfa'i      1, 39, 3       1101
+
+    #   85     120_stone      koowhatu          1,39       1001
+    #  763     120_stone         boatu          1,19       1010
+    # 1636     120_stone        'ōfa'i      1, 39, 3       1101
     ('stone', '1'): {'Maori_85', 'South_Island_Maori_763', 'Tahitian_1636'},
     ('stone', '3'): {'Tahitian_1636'},
     ('stone', '19'): {'South_Island_Maori_763'},
     ('stone', '39'): {'Maori_85', 'Tahitian_1636'},
 
-#   85    150_yellow                 koowhai                     U
-#   763                                                          ?  // no form
-# 1636    150_yellow                re'are'a            10       1
+    #   85    150_yellow       koowhai                     U
+    #   763                                                ?  // no form
+    # 1636    150_yellow       re'are'a            10       1
     ('yellow', '10'): {'Tahitian_1636'},
     ('yellow', 'u_1'): {'Maori_85'},
 }
@@ -82,7 +82,6 @@ def cldf_metadata(test_dir):
 @pytest.fixture
 def cldf_records(cldf_metadata):
     return list(load_cldf(cldf_metadata, table='ValueTable'))
-
 
 
 def test_load_cldf(cldf_records):
@@ -160,7 +159,8 @@ class TestNexusMakerCLDF:
     def test_nexus_characters_expected_cognates(self, nexus, label):
         # test that we have all the characters labelled in the nexus
         charlabel = "_".join([slugify(label[0]), label[1]]).replace("to_", "to")
-        assert charlabel in nexus.characters, 'Mismatch on %r -> %r' % (label, charlabel)
+        assert charlabel in nexus.characters, \
+            'Mismatch on %r -> %r' % (label, charlabel)
 
     def test_nexus_nchar(self, nexus):
         assert len(nexus.characters) == self.expected_nchar

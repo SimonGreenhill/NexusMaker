@@ -67,23 +67,23 @@ class TestNexusMaker:
         assert ('arm', '3') in maker.cognates
 
     def test_is_missing_for_parameter(self, maker):
-        assert maker._is_missing_for_parameter('A', 'eye') == False
-        assert maker._is_missing_for_parameter('A', 'leg') == False
-        assert maker._is_missing_for_parameter('A', 'arm') == False
+        assert not maker._is_missing_for_parameter('A', 'eye')
+        assert not maker._is_missing_for_parameter('A', 'leg')
+        assert not maker._is_missing_for_parameter('A', 'arm')
 
-        assert maker._is_missing_for_parameter('B', 'eye') == False
-        assert maker._is_missing_for_parameter('B', 'leg') == False
-        assert maker._is_missing_for_parameter('B', 'arm') == False
+        assert not maker._is_missing_for_parameter('B', 'eye')
+        assert not maker._is_missing_for_parameter('B', 'leg')
+        assert not maker._is_missing_for_parameter('B', 'arm')
 
-        assert maker._is_missing_for_parameter('C', 'eye') == False
-        assert maker._is_missing_for_parameter('C', 'leg') == True, \
+        assert not maker._is_missing_for_parameter('C', 'eye')
+        assert maker._is_missing_for_parameter('C', 'leg'), \
             "Should be missing 'leg' for Language 'C'"
-        assert maker._is_missing_for_parameter('C', 'arm') == False
+        assert not maker._is_missing_for_parameter('C', 'arm')
 
-        assert maker._is_missing_for_parameter('D', 'eye') == True, \
+        assert maker._is_missing_for_parameter('D', 'eye'), \
             "Should be missing 'eye' for Language 'D' (loan)"
-        assert maker._is_missing_for_parameter('D', 'leg') == False
-        assert maker._is_missing_for_parameter('D', 'arm') == False
+        assert not maker._is_missing_for_parameter('D', 'leg')
+        assert not maker._is_missing_for_parameter('D', 'arm')
 
     def test_eye_1(self, nexus):
         cog = 'eye_1'
@@ -133,14 +133,13 @@ class TestNexusMaker:
         assert 'NTAX=4' in out
         assert 'CHARSTATELABELS' in out
         assert 'MATRIX' in out
-    
+
     def test_write_to_file(self, tmp_path, maker):
         maker.write(filename=tmp_path / 'test.nex')
         with open(tmp_path / 'test.nex') as handle:
             content = handle.read()
-        
+
         assert content.lstrip().startswith("#NEXUS")
         assert 'NTAX=4' in content
         assert 'CHARSTATELABELS' in content
         assert 'MATRIX' in content
-        
