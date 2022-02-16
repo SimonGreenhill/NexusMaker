@@ -22,7 +22,7 @@ def test_lru_cache():
     assert sorted(maker.cognates[('eye', '2')]) == ['C', 'D']
     assert sorted(maker.cognates[('eye', 'u_1')]) == ['E']
 
-    assert maker._is_missing_for_parameter('E', 'eye') == False
+    assert not maker._is_missing_for_parameter('E', 'eye')
 
     nex = maker.make()
     assert nex.data['eye_1'] == {

@@ -4,12 +4,13 @@ from nexusmaker import NexusMaker, Record
 # Maori    		1                   = 10
 # Maori    	 	<not cognate>       = // removed as already coded for word
 # Samoan 		1                   = 10
-# Tahiatian  	<not cognate>       = u1 
-# Tahiatian  	<not cognate>       = // removed as already coded for word 
+# Tahiatian  	<not cognate>       = u1
+# Tahiatian  	<not cognate>       = // removed as already coded for word
 # Tahiatian  	<not cognate>       = // removed as already coded for word
 # Tongan    	<no data>           = ??  // missing data
 
-def test_exampled():
+
+def test_example():
     maker = NexusMaker(data=[
         Record(Language="Maori", Parameter="word1", Item="", Cognacy="1"),
         Record(Language="Maori", Parameter="word1", Item="", Cognacy=""),
@@ -33,7 +34,7 @@ def test_exampled():
     assert sorted(maker.cognates[uniques[0]]) == ['Tahitian']
     assert sorted(maker.cognates[('word2', '1')]) == ['Tongan']
 
-    assert maker._is_missing_for_parameter('Tongan', 'word1') == True
+    assert maker._is_missing_for_parameter('Tongan', 'word1')
 
     nex = maker.make()
     assert nex.data['word1_1'] == {
@@ -49,7 +50,7 @@ def test_exampled():
         'Tahitian': '1',
         'Tongan':   '?',
     }
-    
+
     assert nex.data['word2_1'] == {
         'Maori':    '?',
         'Samoan':   '?',
