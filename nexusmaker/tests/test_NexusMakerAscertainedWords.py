@@ -2,7 +2,7 @@ import pytest
 from nexusmaker.tests.test_NexusMaker import TestNexusMaker
 
 
-class TestNexusMakerAscertainedParameters(TestNexusMaker):
+class TestNexusMakerAscParam(TestNexusMaker):
     @pytest.fixture
     def maker(self, nexusmakerascparameters):
         return nexusmakerascparameters

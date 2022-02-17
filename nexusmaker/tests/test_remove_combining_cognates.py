@@ -3,22 +3,72 @@ import pytest
 from nexusmaker import NexusMaker, Record
 from nexusmaker.tools import remove_combining_cognates
 from nexusmaker.tests.test_NexusMaker import TestNexusMaker
+from nexusmaker.tests.test_NexusMakerAscertained import TestNexusMakerAscertained
+from nexusmaker.tests.test_NexusMakerAscertainedWords import TestNexusMakerAscertainedParameters
 
-
-class TestNexusMakerRemovedCombining(TestNexusMaker):
-    @pytest.fixture
-    def maker(self, nexusmaker):
-        return remove_combining_cognates(nexusmaker, keep=1)
-
-    # everything should be the same except for this:
-    # Record(ID=12, Language="D", Parameter="arm", Item="", Cognacy="2,3"),
-    # ... which will no longer be in arm_3
+# patch test case to handle the altered arm_3 cognate set:
+# everything should be the same except for this:
+# Record(ID=12, Language="D", Parameter="arm", Item="", Cognacy="2,3"),
+# ... which will no longer be in arm_3
+class Arm3Mixin:
     def test_arm_3(self, nexus):
         cog = 'arm_3'
         assert nexus.data[cog]['A'] == '0'
         assert nexus.data[cog]['B'] == '0'
         assert nexus.data[cog]['C'] == '1'
         assert nexus.data[cog]['D'] == '0'  # CHANGED VALUE
+
+
+class TestCombining(Arm3Mixin, TestNexusMaker):
+    @pytest.fixture
+    def maker(self, nexusmaker):
+        return remove_combining_cognates(nexusmaker, keep=1)
+
+
+class TestCombiningAscertained(Arm3Mixin, TestNexusMakerAscertained):
+    @pytest.fixture
+    def maker(self, nexusmakerasc):
+        return remove_combining_cognates(nexusmakerasc, keep=1)
+
+
+class TestCombiningAscertainedParameters(Arm3Mixin, TestNexusMakerRemovedCombiningAscertainedParameters):
+    @pytest.fixture
+    def maker(self, nexusmakerascparameters):
+        return remove_combining_cognates(nexusmakerascparameters, keep=1)
+
+
+# class TestNexusMakerRemovedCombining(TestNexusMaker):
+
+#     # everything should be the same except for this:
+#     # Record(ID=12, Language="D", Parameter="arm", Item="", Cognacy="2,3"),
+#     # ... which will no longer be in arm_3
+#     def test_arm_3(self, nexus):
+#         cog = 'arm_3'
+#         assert nexus.data[cog]['A'] == '0'
+#         assert nexus.data[cog]['B'] == '0'
+#         assert nexus.data[cog]['C'] == '1'
+#         assert nexus.data[cog]['D'] == '0'  # CHANGED VALUE
+
+
+# class TestNexusMakerRemovedCombiningAscertained(TestNexusMakerRemovedCombining):
+#     @pytest.fixture
+#     def maker(self, nexusmakerasc):
+#         return remove_combining_cognates(nexusmakerasc, keep=1)
+
+#     # 1 more site than before in ascertainment = none
+#     def test_nsites(self, nexus):
+#         assert len(nexus.data.keys()) == 7
+
+
+# class TestNexusMakerRemovedCombiningAscertainedWords(TestNexusMakerRemovedCombining):
+#     @pytest.fixture
+#     def maker(self, nexusmakerascparameters):
+#         return remove_combining_cognates(nexusmakerascparameters, keep=1)
+
+#     def test_nsites(self, nexus):
+#         # 1 more site per word than in ascertainment is none:
+#         #   6 cognates + 3 words = 9
+#         assert len(nexus.data.keys()) == 9
 
 
 @pytest.fixture
