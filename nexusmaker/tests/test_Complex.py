@@ -87,7 +87,7 @@ class TestNexusMakerComplex:
     @pytest.fixture
     def nexus(self, maker):
         return maker.make()
-    
+
     def test_languages(self, maker):
         assert maker.languages == {
             'Aiwoo-501', 'Banoni-4', 'Dehu-196', 'Eton-1088', 'Hiw-639',
@@ -100,7 +100,8 @@ class TestNexusMakerComplex:
     def test_ncognates(self, maker):
         assert len(maker.cognates) == self.expected_ncog
 
-    @pytest.mark.parametrize("key,members",
+    @pytest.mark.parametrize(
+        "key,members",
         [(e, EXPECTED_COGNATES[e]) for e in EXPECTED_COGNATES]
     )
     def test_cognate_sets(self, maker, key, members):
@@ -139,15 +140,19 @@ class TestNexusMakerComplex:
     def test_nexus_nchar(self, nexus):
         assert len(nexus.characters) == self.expected_nchar
 
-    def test_entries_with_a_cognate_in_the_same_parameter_arenot_added_as_unique(self, nexus):
+    def test_not_added_as_unique(self, nexus):
+        """Test that entries with another lexeme are not given unique."""
         hand = [c for c in nexus.characters if c.startswith('hand_')]
-        hand = [c for c in hand if CognateParser().is_unique_cognateset(c, labelled=True)]
+        hand = [
+            c for c in hand
+            if CognateParser().is_unique_cognateset(c, labelled=True)
+        ]
         assert len(hand) == 1, 'Only expecting one unique character for hand'
         assert nexus.data['hand_u_2']['Iaai-471'] in ('0', '?'), \
             'Iaai-471 should not be unique for `hand`'
 
 
-class TestNexusMakerComplexAscertained(TestNexusMakerComplex):
+class TestNexusMakerComplexAsc(TestNexusMakerComplex):
     expected_nchar = len(EXPECTED_COGNATES) + 1
 
     @pytest.fixture
@@ -155,7 +160,7 @@ class TestNexusMakerComplexAscertained(TestNexusMakerComplex):
         return NexusMakerAscertained(data=COMPLEX_TESTDATA)
 
 
-class TestNexusMakerComplexAscertainedParameters(TestNexusMakerComplexAscertained):
+class TestNexusMakerComplexAscParam(TestNexusMakerComplexAsc):
     expected_nchar = len(EXPECTED_COGNATES) + 3
 
     @pytest.fixture

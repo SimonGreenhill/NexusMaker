@@ -40,7 +40,7 @@ EXPECTED_COGNATES = {
     #   85       45_eye       mata             1       10
     # 1636       45_eye       mata             1       10
     #  763       45_eye     konohi             4       01
-    ('eye', '1'): {'Maori_85','Tahitian_1636'},
+    ('eye', '1'): {'Maori_85', 'Tahitian_1636'},
     ('eye', '4'): {'South_Island_Maori_763'},
 
     #   85    68_needle       ngira           LOAN      ??
@@ -132,7 +132,8 @@ class TestNexusMakerCLDF:
     def test_ncognates(self, maker):
         assert len(maker.cognates) == self.expected_ncog
 
-    @pytest.mark.parametrize("key,members",
+    @pytest.mark.parametrize(
+        "key,members",
         [(e, EXPECTED_COGNATES[e]) for e in EXPECTED_COGNATES]
     )
     def test_cognate_sets(self, maker, key, members):
@@ -158,7 +159,8 @@ class TestNexusMakerCLDF:
     @pytest.mark.parametrize("label", EXPECTED_COGNATES.keys())
     def test_nexus_characters_expected_cognates(self, nexus, label):
         # test that we have all the characters labelled in the nexus
-        charlabel = "_".join([slugify(label[0]), label[1]]).replace("to_", "to")
+        charlabel = "_".join([slugify(label[0]), label[1]])
+        charlabel = charlabel.replace("to_", "to")
         assert charlabel in nexus.characters, \
             'Mismatch on %r -> %r' % (label, charlabel)
 

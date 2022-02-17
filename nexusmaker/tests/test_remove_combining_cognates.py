@@ -3,8 +3,9 @@ import pytest
 from nexusmaker import NexusMaker, Record
 from nexusmaker.tools import remove_combining_cognates
 from nexusmaker.tests.test_NexusMaker import TestNexusMaker
-from nexusmaker.tests.test_NexusMakerAscertained import TestNexusMakerAscertained
-from nexusmaker.tests.test_NexusMakerAscertainedWords import TestNexusMakerAscertainedParameters
+from nexusmaker.tests.test_NexusMakerAsc import TestNexusMakerAsc
+from nexusmaker.tests.test_NexusMakerAscParam import TestNexusMakerAscParam
+
 
 # patch test case to handle the altered arm_3 cognate set:
 # everything should be the same except for this:
@@ -25,50 +26,16 @@ class TestCombining(Arm3Mixin, TestNexusMaker):
         return remove_combining_cognates(nexusmaker, keep=1)
 
 
-class TestCombiningAscertained(Arm3Mixin, TestNexusMakerAscertained):
+class TestCombiningAsc(Arm3Mixin, TestNexusMakerAsc):
     @pytest.fixture
     def maker(self, nexusmakerasc):
         return remove_combining_cognates(nexusmakerasc, keep=1)
 
 
-class TestCombiningAscertainedParameters(Arm3Mixin, TestNexusMakerRemovedCombiningAscertainedParameters):
+class TestCombiningAscParam(Arm3Mixin, TestNexusMakerAscParam):
     @pytest.fixture
     def maker(self, nexusmakerascparameters):
         return remove_combining_cognates(nexusmakerascparameters, keep=1)
-
-
-# class TestNexusMakerRemovedCombining(TestNexusMaker):
-
-#     # everything should be the same except for this:
-#     # Record(ID=12, Language="D", Parameter="arm", Item="", Cognacy="2,3"),
-#     # ... which will no longer be in arm_3
-#     def test_arm_3(self, nexus):
-#         cog = 'arm_3'
-#         assert nexus.data[cog]['A'] == '0'
-#         assert nexus.data[cog]['B'] == '0'
-#         assert nexus.data[cog]['C'] == '1'
-#         assert nexus.data[cog]['D'] == '0'  # CHANGED VALUE
-
-
-# class TestNexusMakerRemovedCombiningAscertained(TestNexusMakerRemovedCombining):
-#     @pytest.fixture
-#     def maker(self, nexusmakerasc):
-#         return remove_combining_cognates(nexusmakerasc, keep=1)
-
-#     # 1 more site than before in ascertainment = none
-#     def test_nsites(self, nexus):
-#         assert len(nexus.data.keys()) == 7
-
-
-# class TestNexusMakerRemovedCombiningAscertainedWords(TestNexusMakerRemovedCombining):
-#     @pytest.fixture
-#     def maker(self, nexusmakerascparameters):
-#         return remove_combining_cognates(nexusmakerascparameters, keep=1)
-
-#     def test_nsites(self, nexus):
-#         # 1 more site per word than in ascertainment is none:
-#         #   6 cognates + 3 words = 9
-#         assert len(nexus.data.keys()) == 9
 
 
 @pytest.fixture
@@ -146,6 +113,5 @@ def test_combining_2(combiningmaker):
     assert nexus.data['word2_3']['A'] == '0'
     assert nexus.data['word2_3']['B'] == '0'
     assert nexus.data['word2_3']['C'] == '1'
-    
-    assert len(nexus.data.keys()) == 5
 
+    assert len(nexus.data.keys()) == 5

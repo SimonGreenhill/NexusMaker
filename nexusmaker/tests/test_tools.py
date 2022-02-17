@@ -33,8 +33,10 @@ def test_parse_parameter():
     assert parse_parameter("Eight_u3569") == ("Eight", "u3569")
     assert parse_parameter("correct_true_u_5631") == ("correct_true", "u_5631")
     assert parse_parameter("correct_true_u5631") == ("correct_true", "u5631")
-    assert parse_parameter("to_tie_up_fasten_u_5685") == ("to_tie_up_fasten", "u_5685")
-    assert parse_parameter("to_tie_up_fasten_u5685") == ("to_tie_up_fasten", "u5685")
+    assert parse_parameter("to_tie_up_fasten_u_5685") == \
+        ("to_tie_up_fasten", "u_5685")
+    assert parse_parameter("to_tie_up_fasten_u5685") == \
+        ("to_tie_up_fasten", "u5685")
 
     with pytest.raises(ValueError):
         parse_parameter("hand")

@@ -20,7 +20,7 @@ RECORDS = """
 45362	011	Tzotzil	00024	Delgaty_1964	cloud	but'ul	11
 45363	011	Tzotzil	00024	Delgaty_1964	cloud	toc	5
 45364	011	Tzotzil	00024	Delgaty_1964	cloud	stacel winajel	5
-45365	011	Tzotzil	00036	Materials_on_the_Mayan_Languages_of_Mexico_1949b	cloud	toc	5
+45365	011	Tzotzil	00036	Materials_1949b	cloud	toc	5
 45366	011	Tzotzil	00034	Weathers_and_Weathers_1949	cloud	toc	5
 45367	011	Tzotzil	00061	Stoll_1884	cloud	toc	5
 25058	012	Tojolabal	00033	Jackson_and_Supple_1952	cloud	ason	1
@@ -76,7 +76,7 @@ RECORDS = """
 04045	008	Chol	00084	Attinasi_1973	cloud	toc-al-i-lal	5
 04046	008	Chol	00084	Attinasi_1973	cloud	toc-al	5
 04047	008	Chol	00083	Schumann	cloud	tocal	5
-04048	008	Chol	00036	Materials_on_the_Mayan_Languages_of_Mexico_1949b	cloud	tocal	5
+04048	008	Chol	00036	Materials_1949b	cloud	tocal	5
 04049	008	Chol	00047	Sapper_1907	cloud	tyocal	5
 04050	008	Chol	00053	Sapper_1897	cloud	tyocal	5
 04051	008	Chol	00061	Stoll_1884	cloud	tiocál	5
@@ -250,7 +250,9 @@ class TestNexusMakerMayan:
     def test_ncognates(self, maker):
         assert len(maker.cognates) == self.expected_ncog
 
-    @pytest.mark.parametrize("key,members", [(e, EXPECTED[e]) for e in EXPECTED])
+    @pytest.mark.parametrize(
+        "key,members", [(e, EXPECTED[e]) for e in EXPECTED]
+    )
     def test_cognate_sets(self, maker, key, members):
         assert key in maker.cognates, "Missing %s" % key
         obtained = maker.cognates.get(key, set())

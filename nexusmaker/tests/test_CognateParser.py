@@ -183,7 +183,8 @@ def test_complicated_nostrict_nounique():
 
 
 def test_complicated_with_slash():
-    assert CognateParser(strict=True, uniques=True).parse_cognate('53/54') == ['53', '54']
+    parser = CognateParser(strict=True, uniques=True)
+    assert parser.parse_cognate('53/54') == ['53', '54']
 
 
 def test_combined_cognate():

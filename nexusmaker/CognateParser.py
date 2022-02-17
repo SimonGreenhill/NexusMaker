@@ -14,7 +14,8 @@ class CognateParser(object):
 
         - strict (default=True):  remove dubious cognates (?)
         - uniques (default=True): non-cognate items get unique states
-        - sort (default=True):  normalise ordering with natsort (i.e. 2,1 => 1,2)
+        - sort (default=True):  normalise ordering with natsort
+            (i.e. 2,1 => 1,2)
         """
         self.uniques = uniques
         self.strict = strict
@@ -57,7 +58,8 @@ class CognateParser(object):
             value = value.replace('.', ',').replace("/", ",")
             # parse out subcognates
             value = [
-                self._split_combined_cognate(v.strip()) for v in value.split(",")
+                self._split_combined_cognate(v.strip())
+                for v in value.split(",")
             ]
             value = [item for sublist in value for item in sublist]
             if self.strict:

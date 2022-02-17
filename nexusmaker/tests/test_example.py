@@ -28,7 +28,11 @@ def test_example():
     assert ('word1', '1') in maker.cognates
     assert ('word2', '1') in maker.cognates
 
-    uniques = [c for c in maker.cognates if c[0] == 'word1' and c[1].startswith('u_')]
+    uniques = [
+        c for c in maker.cognates
+        if c[0] == 'word1'
+        and c[1].startswith('u_')
+    ]
     assert len(uniques) == 1
     assert sorted(maker.cognates[('word1', '1')]) == ['Maori', 'Samoan']
     assert sorted(maker.cognates[uniques[0]]) == ['Tahitian']

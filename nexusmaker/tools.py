@@ -33,7 +33,7 @@ def natsort(alist):
     """
     Sort the given iterable in the way that humans expect.
 
-    From: https://stackoverflow.com/questions/2669059/how-to-sort-alpha-numeric-set-in-python
+    From: https://stackoverflow.com/questions/2669059/
     """
     def convert(text):
         return int(text) if text.isdigit() else text
