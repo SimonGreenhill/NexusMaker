@@ -1,32 +1,32 @@
 ID,Language_ID,Parameter_ID,Value,Code_ID,Comment,Source,Cognacy,Loan
-85-1_hand-1,85,1_hand,ringa(ringa),,irregular medial C (see Pollex),Biggs-85-2005,"1, 64, 34",false
-85-3_right-1,85,3_right,katau,,,Biggs-85-2005,"5, 40",false
-85-3_right-2,85,3_right,matau,,,Biggs-85-2005,"5, 13",false
-85-23_blood-1,85,23_blood,toto,,,Biggs-85-2005,4,false
-85-39_tocook-1,85,39_tocook,tao,,,Biggs-85-2005,10,false
-85-45_eye-1,85,45_eye,mata,,,Biggs-85-2005,1,false
-85-68_needle-1,85,68_needle,ngira,,L from English,Biggs-85-2005,,true
-85-104_fatgrease-1,85,104_fatgrease,ngako,,,Biggs-85-2005,14,false
-85-120_stone-1,85,120_stone,koowhatu,,,Biggs-85-2005,"1,39",false
-85-150_yellow-1,85,150_yellow,koowhai,,,Biggs-85-2005,,false
-763-1_hand-1,763,1_hand,rika,,,harlow1987a,"1, 64",false
-763-23_blood-1,763,23_blood,toto,,,harlow1987a,4,false
-763-39_tocook-1,763,39_tocook,pupu,,b.,harlow1987a,,false
-763-39_tocook-2,763,39_tocook,taona,,"to roast, to burn",harlow1987a,10,false
-763-39_tocook-3,763,39_tocook,tao(-na),,cook (Wiliams 1971),harlow1987a,10,false
-763-45_eye-1,763,45_eye,konohi,,,harlow1987a,4,false
-763-68_needle-1,763,68_needle,tui,,,harlow1987a,66,false
-763-104_fatgrease-1,763,104_fatgrease,ihinu,,,harlow1987a,12,false
-763-120_stone-1,763,120_stone,boatu,,,harlow1987a,"1,19",false
-1636-1_hand-1,1636,1_hand,rima,,,AT2020,"1, 64",false
-1636-3_right-1,1636,3_right,'atau,,,AT2020,"5,40",false
-1636-23_blood-1,1636,23_blood,toto,,,AT2020,4,false
-1636-39_tocook-1,1636,39_tocook,tunu,,,AT2020,9,false
-1636-39_tocook-2,1636,39_tocook,fa'a'ā,,,AT2020,2?,false
-1636-45_eye-1,1636,45_eye,mata,,,AT2020,1,false
-1636-68_needle-1,1636,68_needle,au,,,AT2020,1,false
-1636-68_needle-2,1636,68_needle,nira,,L from English,AT2020,,true
-1636-104_fatgrease-1,1636,104_fatgrease,'a'o,,,AT2020,14,false
-1636-104_fatgrease-2,1636,104_fatgrease,poria,,,AT2020,,false
-1636-120_stone-1,1636,120_stone,'ōfa'i,,,AT2020,"1, 39, 3",false
-1636-150_yellow-1,1636,150_yellow,re'are'a,,,AT2020,10,false
+85-1_hand-1,Maori_85,1_hand,ringa(ringa),,irregular medial C (see Pollex),Biggs-85-2005,"1, 64, 34",false
+85-3_right-1,Maori_85,3_right,katau,,,Biggs-85-2005,"5, 40",false
+85-3_right-2,Maori_85,3_right,matau,,,Biggs-85-2005,"5, 13",false
+85-23_blood-1,Maori_85,23_blood,toto,,,Biggs-85-2005,4,false
+85-39_tocook-1,Maori_85,39_tocook,tao,,,Biggs-85-2005,10,false
+85-45_eye-1,Maori_85,45_eye,mata,,,Biggs-85-2005,1,false
+85-68_needle-1,Maori_85,68_needle,ngira,,L from English,Biggs-85-2005,,true
+85-104_fatgrease-1,Maori_85,104_fatgrease,ngako,,,Biggs-85-2005,14,false
+85-120_stone-1,Maori_85,120_stone,koowhatu,,,Biggs-85-2005,"1,39",false
+85-150_yellow-1,Maori_85,150_yellow,koowhai,,,Biggs-85-2005,,false
+763-1_hand-1,South_Island_Maori_763,1_hand,rika,,,harlow1987a,"1, 64",false
+763-23_blood-1,South_Island_Maori_763,23_blood,toto,,,harlow1987a,4,false
+763-39_tocook-1,South_Island_Maori_763,39_tocook,pupu,,b.,harlow1987a,,false
+763-39_tocook-2,South_Island_Maori_763,39_tocook,taona,,"to roast, to burn",harlow1987a,10,false
+763-39_tocook-3,South_Island_Maori_763,39_tocook,tao(-na),,cook (Wiliams 1971),harlow1987a,10,false
+763-45_eye-1,South_Island_Maori_763,45_eye,konohi,,,harlow1987a,4,false
+763-68_needle-1,South_Island_Maori_763,68_needle,tui,,,harlow1987a,66,false
+763-104_fatgrease-1,South_Island_Maori_763,104_fatgrease,ihinu,,,harlow1987a,12,false
+763-120_stone-1,South_Island_Maori_763,120_stone,boatu,,,harlow1987a,"1,19",false
+1636-1_hand-1,Tahitian_1636,1_hand,rima,,,AT2020,"1, 64",false
+1636-3_right-1,Tahitian_1636,3_right,'atau,,,AT2020,"5,40",false
+1636-23_blood-1,Tahitian_1636,23_blood,toto,,,AT2020,4,false
+1636-39_tocook-1,Tahitian_1636,39_tocook,tunu,,,AT2020,9,false
+1636-39_tocook-2,Tahitian_1636,39_tocook,fa'a'ā,,,AT2020,2?,false
+1636-45_eye-1,Tahitian_1636,45_eye,mata,,,AT2020,1,false
+1636-68_needle-1,Tahitian_1636,68_needle,au,,,AT2020,1,false
+1636-68_needle-2,Tahitian_1636,68_needle,nira,,L from English,AT2020,,true
+1636-104_fatgrease-1,Tahitian_1636,104_fatgrease,'a'o,,,AT2020,14,false
+1636-104_fatgrease-2,Tahitian_1636,104_fatgrease,poria,,,AT2020,,false
+1636-120_stone-1,Tahitian_1636,120_stone,'ōfa'i,,,AT2020,"1, 39, 3",false
+1636-150_yellow-1,Tahitian_1636,150_yellow,re'are'a,,,AT2020,10,false

@@ -87,7 +87,7 @@ def cldf_records(cldf_metadata):
 def test_load_cldf(cldf_records):
     assert len(cldf_records) == 31
     assert cldf_records[-1].ID == '1636-150_yellow-1'
-    assert cldf_records[-1].Language_ID == '1636'
+    assert cldf_records[-1].Language_ID == 'Tahitian_1636'
     assert cldf_records[-1].Language == 'Tahitian'
     assert cldf_records[-1].Parameter_ID == '150_yellow'
     assert cldf_records[-1].Parameter == 'yellow'

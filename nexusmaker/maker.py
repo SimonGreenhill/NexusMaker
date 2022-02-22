@@ -7,6 +7,15 @@ from .CognateParser import CognateParser
 from .tools import slugify, parse_parameter
 
 
+def is_integer(x):
+    try:
+        int(x)
+        return True
+    except ValueError:
+        return False
+
+
+
 class Record(object):
     def __init__(self, **kwargs):
         defaults = ['ID', 'Language_ID', 'Language', 'Parameter_ID', 'Parameter', 'Item', 'Loan', 'Cognacy']
@@ -34,8 +43,10 @@ class Record(object):
     def get_taxon(self):
         if self.Language_ID is None:
             return slugify(self.Language)
-        else:
+        elif is_integer(self.Language_ID):
             return "%s_%s" % (slugify(self.Language), str(self.Language_ID))
+        else:
+            return self.Language_ID
 
 
 class NexusMaker(object):

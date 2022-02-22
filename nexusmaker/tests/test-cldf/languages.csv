@@ -1,4 +1,4 @@
 ID,Name,Macroarea,Latitude,Longitude,Glottocode,ISO639P3code
-85,Maori,Papunesia,-38.2881,176.541,maor1246,mri
-763,South Island Maori,Papunesia,,,sout2867,mri
-1636,Tahitian,Papunesia,-17.6485,-149.45,tahi1242,tah
+Maori_85,Maori,Papunesia,-38.2881,176.541,maor1246,mri
+South_Island_Maori_763,South Island Maori,Papunesia,,,sout2867,mri
+Tahitian_1636,Tahitian,Papunesia,-17.6485,-149.45,tahi1242,tah
