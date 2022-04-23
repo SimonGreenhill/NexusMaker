@@ -154,7 +154,7 @@ class TestNexusMakerCLDF:
         assert sorted(nexus.symbols) == sorted(['0', '1']), nexus.symbols
 
     def test_nexus_taxa(self, maker, nexus):
-        assert maker.languages == nexus.taxa
+        assert sorted(maker.languages) == sorted(nexus.taxa)
 
     @pytest.mark.parametrize("label", EXPECTED_COGNATES.keys())
     def test_nexus_characters_expected_cognates(self, nexus, label):

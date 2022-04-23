@@ -202,7 +202,7 @@ def test_sorting():
 
 # unparsable cognate sets raise ValueErrors
 def test_empty_entries():
-    with pytest.raises(ValueError):
+    with pytest.warns(UserWarning):
         CognateParser(uniques=False).parse_cognate(',,')
 
 
@@ -211,11 +211,12 @@ def test_bad_cog_int():
         CognateParser().parse_cognate(1)
 
 
+# unparsable cognate sets issue warnings
 def test_trailing_dash():
-    with pytest.raises(ValueError):
+    with pytest.warns(UserWarning):
         CognateParser().parse_cognate('1-')
 
 
 def test_semicolon():
-    with pytest.raises(ValueError):
+    with pytest.warns(UserWarning):
         CognateParser().parse_cognate('2, 63; 87')

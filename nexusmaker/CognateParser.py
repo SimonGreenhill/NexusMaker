@@ -1,4 +1,5 @@
 import re
+from warnings import warn
 from nexusmaker.tools import natsort
 
 is_combined_cognate = re.compile(r"""(\d+)([a-z]+)""")
@@ -50,11 +51,11 @@ class CognateParser(object):
             return self.get_next_unique()
         elif isinstance(value, str):
             if value.startswith(","):
-                raise ValueError("Possible broken combined cognate %r" % raw)
+                warn("Possible broken combined cognate %r" % raw)
             if value.endswith("-"):
-                raise ValueError("Possible broken combined cognate %r" % raw)
+                warn("Possible broken combined cognate %r" % raw)
             elif ';' in value:
-                raise ValueError("Possible broken combined cognate %r" % raw)
+                warn("Possible broken combined cognate %r" % raw)
             value = value.replace('.', ',').replace("/", ",")
             # parse out subcognates
             value = [

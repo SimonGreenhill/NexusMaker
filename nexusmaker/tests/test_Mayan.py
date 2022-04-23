@@ -263,7 +263,7 @@ class TestNexusMakerMayan:
         assert sorted(nexus.symbols) == sorted(['0', '1'])
 
     def test_nexus_taxa(self, maker, nexus):
-        assert maker.languages == nexus.taxa
+        assert sorted(maker.languages) == sorted(nexus.taxa)
 
     @pytest.mark.parametrize("label", EXPECTED.keys())
     def test_nexus_characters_EXPECTED(self, nexus, label):
