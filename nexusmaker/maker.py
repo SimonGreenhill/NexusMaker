@@ -54,11 +54,14 @@ class NexusMaker(object):
     data = list of Record instances
     cogparser = a specified CognateParser instance (default=None).
     remove_loans = remove loan words (default=True)
+    unique_ids = keep record_ids for unique cognates (default=False)
     """
 
-    def __init__(self, data, cogparser=None, remove_loans=True):
+    def __init__(self, data, cogparser=None, remove_loans=True, unique_ids=False):
         self.data = [self._check(r) for r in data]
         self.cogparser = cogparser if cogparser else CognateParser(strict=True, uniques=True)
+        
+        self.unique_ids = unique_ids
 
         # loans
         self.remove_loans = remove_loans
@@ -113,7 +116,7 @@ class NexusMaker(object):
                 if self.remove_loans and rec.is_loan:
                     raise ValueError("%r is a loan!" % rec)
 
-                for cog in self.cogparser.parse_cognate(rec.Cognacy):
+                for cog in self.cogparser.parse_cognate(rec.Cognacy, rec.ID if self.unique_ids else None):
                     if self.cogparser.is_unique_cognateset(cog):
                         uniques[(rec.get_taxon(), rec.Parameter)] = cog
                     else:

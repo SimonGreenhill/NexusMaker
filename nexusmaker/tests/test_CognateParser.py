@@ -59,10 +59,20 @@ def test_uniques():
     assert CP.parse_cognate('') == ['u_4']
     assert CP.parse_cognate(None) == ['u_5']
 
+    # with record_ids
+    assert CP.parse_cognate('', 'a') == ['u_a']
+    assert CP.parse_cognate('', '123') == ['u_123']
+    assert CP.parse_cognate('', 'testid') == ['u_testid']
+    assert CP.parse_cognate('', '1 2,3') == ['u_1_23']
+    assert CP.parse_cognate('', 199) == ['u_199']  # integer
+
     CP = CognateParser(uniques=False)
     assert CP.parse_cognate('') == []
     assert CP.parse_cognate('') == []
     assert CP.parse_cognate(None) == []
+    
+    
+    
 
 
 def test_strict_off():

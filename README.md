@@ -38,6 +38,9 @@ maker.write(nex, filename="output.nex")
 
 ### Version History:
 
+* 2.0.4: add `unique_ids` parameter 
+* 2.0.3: handle CLDF datasets
+* 2.0.2: add tool to filter combining cognates
 * 2.0.1: minor bugfixes.
 * 2.0: major refactor of testing and other components.
 * 1.5: do more validation of cognate sets to detect possibly broken combined cognate sets.

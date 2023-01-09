@@ -131,7 +131,7 @@ class TestNexusMaker:
     def test_write(self, maker):
         out = maker.write()
         assert out.lstrip().startswith("#NEXUS")
-        assert 'NTAX=4' in out
+        assert 'NTAX=%d' % len(maker.languages) in out
         assert 'CHARSTATELABELS' in out
         assert 'MATRIX' in out
 
@@ -141,6 +141,51 @@ class TestNexusMaker:
             content = handle.read()
 
         assert content.lstrip().startswith("#NEXUS")
-        assert 'NTAX=4' in content
+        assert 'NTAX=%d' % len(maker.languages) in content
         assert 'CHARSTATELABELS' in content
         assert 'MATRIX' in content
+
+
+
+
+class TestNexusMakerWithIDs(TestNexusMaker):
+    @pytest.fixture
+    def maker(self, nexusmaker):
+        nexusmaker.data.extend([
+            Record(ID=99, Language="E", Parameter="eye", Item="", Cognacy="", Loan=False),
+            Record(ID='abc', Language="E", Parameter="leg", Item="", Cognacy="", Loan=False),
+        ])
+        nexusmaker.unique_ids = True
+        return nexusmaker
+
+    def test_languages(self, maker):
+        assert maker.languages == {'A', 'B', 'C', 'D', 'E'}
+
+    def test_nsites(self, nexus):
+        assert len(nexus.data.keys()) == 8, nexus.data.keys()
+
+    def test_cognate_set_with_unique_ids(self, maker):
+        assert ('eye', 'u_99') in maker.cognates
+        assert ('leg', 'u_abc') in maker.cognates
+    
+    def test_language_e(self, nexus):
+        assert nexus.data['eye_1']['E'] == '0'
+        assert nexus.data['leg_1']['E'] == '0'
+        assert nexus.data['leg_2']['E'] == '0'
+        assert nexus.data['arm_1']['E'] == '?'  # no entry for e arm
+        assert nexus.data['arm_2']['E'] == '?'  # no entry for e arm
+        assert nexus.data['arm_3']['E'] == '?'  # no entry for e arm
+    
+    def test_eye_unique_99(self, nexus):
+        assert nexus.data['eye_u_99']['A'] == '0'
+        assert nexus.data['eye_u_99']['B'] == '0'
+        assert nexus.data['eye_u_99']['C'] == '0'
+        assert nexus.data['eye_u_99']['D'] == '?'  # d has no eye
+        assert nexus.data['eye_u_99']['E'] == '1'
+
+    def test_eye_unique_abc(self, nexus):
+        assert nexus.data['leg_u_abc']['A'] == '0'
+        assert nexus.data['leg_u_abc']['B'] == '0'
+        assert nexus.data['leg_u_abc']['C'] == '?'  # c has no leg
+        assert nexus.data['leg_u_abc']['D'] == '0'
+        assert nexus.data['leg_u_abc']['E'] == '1'

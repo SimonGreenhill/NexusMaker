@@ -12,16 +12,16 @@ from nexusmaker import NexusMaker, Record
 
 def test_example():
     maker = NexusMaker(data=[
-        Record(Language="Maori", Parameter="word1", Item="", Cognacy="1"),
-        Record(Language="Maori", Parameter="word1", Item="", Cognacy=""),
-        Record(Language="Samoan", Parameter="word1", Item="", Cognacy="1"),
-        Record(Language="Tahitian", Parameter="word1", Item="", Cognacy=""),
-        Record(Language="Tahitian", Parameter="word1", Item="", Cognacy=""),
-        Record(Language="Tahitian", Parameter="word1", Item="", Cognacy=""),
+        Record(ID=1, Language="Maori", Parameter="word1", Item="", Cognacy="1"),
+        Record(ID=2, Language="Maori", Parameter="word1", Item="", Cognacy=""),
+        Record(ID=3, Language="Samoan", Parameter="word1", Item="", Cognacy="1"),
+        Record(ID=4, Language="Tahitian", Parameter="word1", Item="", Cognacy=""),
+        Record(ID=5, Language="Tahitian", Parameter="word1", Item="", Cognacy=""),
+        Record(ID=6, Language="Tahitian", Parameter="word1", Item="", Cognacy=""),
         # ...note missing Tongan entry here.
 
         # add some entries for word 2 so Tongan will show as missing
-        Record(Language="Tongan", Parameter="word2", Item="", Cognacy="1"),
+        Record(ID=7, Language="Tongan", Parameter="word2", Item="", Cognacy="1"),
 
     ])
 
