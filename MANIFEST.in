@@ -1,7 +1,5 @@
 include README.md
 include LICENSE
-exclude .gitignore
-exclude .coverage
 prune htmlcov
 prune .cache
 prune .git

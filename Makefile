@@ -8,6 +8,7 @@ quicktest:
 
 build:
 	@python -m build
+    #@python3 setup.py sdist bdist_wheel
 
 release:
 	@twine upload --skip-existing --verbose dist/*
