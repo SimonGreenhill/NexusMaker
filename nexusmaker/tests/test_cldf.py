@@ -182,3 +182,21 @@ class TestNexusMakerCLDFAscertainedParameters(TestNexusMakerCLDFAscertained):
     @pytest.fixture
     def maker(self, cldf_records):
         return NexusMakerAscertainedParameters(data=cldf_records)
+
+
+
+class TestNexusMakerCLDFWithIDs:
+    @pytest.fixture
+    def maker(self, cldf_records):
+        return NexusMaker(data=cldf_records, unique_ids=True)
+    
+    @pytest.fixture
+    def nexus(self, maker):
+        return maker.make()
+    
+    def test_keepid(self, nexus):
+        assert 'yellow_u_85_150_yellow_1' in nexus.data
+        assert nexus.data['yellow_u_85_150_yellow_1']['Maori_85'] == '1'
+        assert nexus.data['yellow_u_85_150_yellow_1']['Tahitian_1636'] == '0'
+        assert nexus.data['yellow_u_85_150_yellow_1']['South_Island_Maori_763'] == '?'
+        
