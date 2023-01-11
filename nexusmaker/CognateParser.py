@@ -37,7 +37,8 @@ class CognateParser(object):
         if not self.uniques:
             return []
         elif record_id:
-            return ["%s%s" % (self.UNIQUE_IDENTIFIER, slugify(str(record_id)))]
+            record_id = slugify(str(record_id)).replace("-", "_")
+            return ["%s%s" % (self.UNIQUE_IDENTIFIER, record_id)]
         else:
             self.unique_id = self.unique_id + 1
             return ["%s%d" % (self.UNIQUE_IDENTIFIER, self.unique_id)]

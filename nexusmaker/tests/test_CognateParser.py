@@ -65,6 +65,7 @@ def test_uniques():
     assert CP.parse_cognate('', 'testid') == ['u_testid']
     assert CP.parse_cognate('', '1 2,3') == ['u_1_23']
     assert CP.parse_cognate('', 199) == ['u_199']  # integer
+    assert CP.parse_cognate('', '68-5175_above1') == ['u_68_5175_above1']
 
     CP = CognateParser(uniques=False)
     assert CP.parse_cognate('') == []
