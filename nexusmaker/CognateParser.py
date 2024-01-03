@@ -45,6 +45,7 @@ class CognateParser(object):
 
     def parse_cognate(self, value, record_id=None):
         raw = value
+        value = str(value) if value is not None else value
         if value is None:
             return self.get_next_unique(record_id)
         elif value == '':
