@@ -18,7 +18,6 @@ def load_cldf(cldf, table='ValueTable', column='Cognacy'):
     for row in dataset[table]:
         for e in ('Language_ID', 'Parameter_ID', column):
             assert e in row, 'Missing expected column %s in table %s' % (e, table)
-
         yield Record(
             ID=row['ID'],
             Language_ID=row['Language_ID'],

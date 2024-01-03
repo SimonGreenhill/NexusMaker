@@ -70,10 +70,19 @@ class NexusMaker(object):
 
     def _check(self, record):
         """Checks that all records have the keys we need"""
-        if getattr(record, 'Language', None) is None:
-            raise ValueError("record has no `Language` %r" % record)
-        if getattr(record, 'Parameter', None) is None:
-            raise ValueError("record has no `Parameter` %r" % record)
+        if not hasattr(record, 'Language'):
+            raise ValueError("Record has no `Language` %r" % record)
+        if not hasattr(record, 'Parameter'):
+            raise ValueError("Record has no `Parameter` %r" % record)
+        if not hasattr(record, 'Cognacy'):
+            raise ValueError("Record has no `Cognacy` %r" % record)
+        
+        # things that cannot be empty
+        for attr in ('Language', 'Parameter'):
+            if getattr(record, attr, None) is None:
+                raise ValueError("Record.%s cannot be None" % attr)
+            
+    
         return record
 
     def get_coglabel(self, record, value):
