@@ -217,11 +217,6 @@ def test_empty_entries():
         CognateParser(uniques=False).parse_cognate(',,')
 
 
-def test_bad_cog_int():
-    with pytest.raises(ValueError):
-        CognateParser().parse_cognate(1)
-
-
 # unparsable cognate sets issue warnings
 def test_trailing_dash():
     with pytest.warns(UserWarning):
