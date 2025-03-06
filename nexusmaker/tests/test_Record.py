@@ -20,8 +20,13 @@ def test_simple():
 
 
 def test_is_loan():
+    # not loans
     assert not Record(Loan="").is_loan
     assert not Record(Loan=None).is_loan
+    assert not Record(Loan=False).is_loan
+    assert not Record(Loan="false").is_loan
+    assert not Record(Loan="False").is_loan
+    # loans
     assert Record(Loan="L").is_loan
     assert Record(Loan="English").is_loan
     assert Record(Loan=True).is_loan

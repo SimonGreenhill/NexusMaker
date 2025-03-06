@@ -105,7 +105,7 @@ class TestNexusMakerCLDF:
 
     @pytest.fixture
     def maker(self, cldf_records):
-        return NexusMaker(data=cldf_records)
+        return NexusMaker(data=cldf_records, remove_loans=True)
 
     @pytest.fixture
     def nexus(self, maker):
@@ -173,7 +173,7 @@ class TestNexusMakerCLDFAscertained(TestNexusMakerCLDF):
 
     @pytest.fixture
     def maker(self, cldf_records):
-        return NexusMakerAscertained(data=cldf_records)
+        return NexusMakerAscertained(data=cldf_records, remove_loans=True)
 
 
 class TestNexusMakerCLDFAscertainedParameters(TestNexusMakerCLDFAscertained):
@@ -181,14 +181,14 @@ class TestNexusMakerCLDFAscertainedParameters(TestNexusMakerCLDFAscertained):
 
     @pytest.fixture
     def maker(self, cldf_records):
-        return NexusMakerAscertainedParameters(data=cldf_records)
+        return NexusMakerAscertainedParameters(data=cldf_records, remove_loans=True)
 
 
 
 class TestNexusMakerCLDFWithIDs:
     @pytest.fixture
     def maker(self, cldf_records):
-        return NexusMaker(data=cldf_records, unique_ids=True)
+        return NexusMaker(data=cldf_records, unique_ids=True, remove_loans=True)
     
     @pytest.fixture
     def nexus(self, maker):

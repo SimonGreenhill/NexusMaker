@@ -62,18 +62,20 @@ def remove_combining_cognates(maker, keep=1):
     sizes = {k: len(maker.cognates[k]) for k in maker.cognates}
 
     # loop over lexemes and remove excess
+    new = []
     for rec in maker.data:
         cog = maker.cogparser.parse_cognate(rec.Cognacy)
         if len(cog) > keep:  # handle combined characters above threshold
             # decorate sort undecorate
             cog = [(sizes[maker.get_coglabel(rec, c)], c) for c in cog]
             # lambda key for sorting sorts by +size, -cognate number
-            cog = [
-                c[1] for c in sorted(cog, key=lambda x:(-x[0], natsort(x[1])))
-            ]
+            cog = [ c[1] for c in sorted(cog, key=lambda x:(-x[0], natsort(x[1]))) ]
             rec.Cognacy = ",".join(cog[0:keep])
-
-    # force regeneration of cognate sets
-    del(maker._cognates)
-    maker.cognates
+            new.append(rec)
+    
+    # maker.data = []
+    # for n in new:
+    #     maker.add(n)
+        
+    maker._cognates = None  # force regeneration of cognate sets
     return maker

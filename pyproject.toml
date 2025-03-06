@@ -1,6 +1,6 @@
 [project]
 name = "nexusmaker"
-version = "0.0.2"
+version = "0.0.4"
 description = "nexusmaker - Nexus file maker for language phylogenies"
 authors = [
   {name = "Simon J. Greenhill", email = "simon@simon.net.nz"}

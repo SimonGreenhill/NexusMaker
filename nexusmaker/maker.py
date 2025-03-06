@@ -33,13 +33,15 @@ class Record(object):
     def is_loan(self):
         if self.Loan is None:
             return False
-        elif self.Loan in (False, ""):
-            return False
-        elif self.Loan is True:
-            return True
-        else:
-            return True
-
+        elif isinstance(self.Loan, bool):
+            return self.Loan
+        elif isinstance(self.Loan, str):
+            if self.Loan.lower() in ("", "false"):
+                return False
+            else:
+                return True
+        raise ValueError("should not happen: %r" % self.Loan)
+        
     def get_taxon(self):
         if self.Language_ID is None:
             return slugify(self.Language)
@@ -56,20 +58,29 @@ class NexusMaker(object):
     remove_loans = remove loan words (default=True)
     unique_ids = keep record_ids for unique cognates (default=False)
     """
-
     def __init__(self, data, cogparser=None, remove_loans=True, unique_ids=False):
-        self.data = [self._check(r) for r in data]
-        self.cogparser = cogparser if cogparser else CognateParser(strict=True, uniques=True)
+        self.remove_loans = remove_loans
         
+        self._cognates = None
+        self.languages = set()
+        self.parameters = set()
+        self.data = []
+        
+        for record in data:
+            self.add(record)
+
+        self.cogparser = cogparser if cogparser else CognateParser(strict=True, uniques=True)
         self.unique_ids = unique_ids
 
-        # loans
-        self.remove_loans = remove_loans
-        if self.remove_loans:
-            self.data = [r for r in data if not r.is_loan]
-
-    def _check(self, record):
+    def add(self, record):
         """Checks that all records have the keys we need"""
+        if not isinstance(record, Record):
+            raise ValueError("Should be a `Record` instance")
+        
+        # skip adding loans if remove_loans=False
+        if self.remove_loans and record.is_loan:
+            return
+        
         if not hasattr(record, 'Language'):
             raise ValueError("Record has no `Language` %r" % record)
         if not hasattr(record, 'Parameter'):
@@ -81,8 +92,12 @@ class NexusMaker(object):
         for attr in ('Language', 'Parameter'):
             if getattr(record, attr, None) is None:
                 raise ValueError("Record.%s cannot be None" % attr)
-            
-    
+        
+        self.languages.add(record.get_taxon())
+        self.parameters.add(record.Parameter)
+        
+        self._cognates = None  # invalidate cognates to avoid a stale/incorrect cache
+        self.data.append(record)
         return record
 
     def get_coglabel(self, record, value):
@@ -94,25 +109,13 @@ class NexusMaker(object):
         Returns True if the given `language` has no cognates for `parameter`
         """
         cogs = [
-            c for c in self._cognates if c[0] == parameter and language in self._cognates[c]
+            c for c in self.cognates if c[0] == parameter and language in self.cognates[c]
         ]
         return len(cogs) == 0
 
     @property
-    def languages(self):
-        if not hasattr(self, '_languages'):
-            self._languages = {r.get_taxon() for r in self.data}
-        return self._languages
-
-    @property
-    def parameters(self):
-        if not hasattr(self, '_parameters'):
-            self._parameters = {r.Parameter for r in self.data}
-        return self._parameters
-
-    @property
     def cognates(self):
-        if not hasattr(self, '_cognates'):
+        if not self._cognates:
             # cognate sets (parameter, cogstate)
             self._cognates = defaultdict(set)
             # unique sets (language, parameter)
@@ -123,8 +126,9 @@ class NexusMaker(object):
 
             for rec in self.data:
                 if self.remove_loans and rec.is_loan:
-                    raise ValueError("%r is a loan!" % rec)
-
+                    #raise ValueError("%r is a loan!" % rec)
+                    continue
+                
                 for cog in self.cogparser.parse_cognate(rec.Cognacy, rec.ID if self.unique_ids else None):
                     if self.cogparser.is_unique_cognateset(cog):
                         uniques[(rec.get_taxon(), rec.Parameter)] = cog

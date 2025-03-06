@@ -20,16 +20,6 @@ def test_nexusmaker_input():
         ])
 
 
-def test_error_on_cognates_with_loans(testdata):
-    """Test that we generate an error if a loan enters .cognates()"""
-    n = NexusMaker(testdata)
-    n.data.append(
-        Record(Language="D", Parameter="eye", Item="", Cognacy="1", Loan=True)
-    )
-    with pytest.raises(ValueError):
-        n.cognates
-
-
 def test_error_on_make_with_uniques_bigger_than_one(testdata):
     """
     Expect error when a unique cognate set contains more than one language.
@@ -151,10 +141,8 @@ class TestNexusMaker:
 class TestNexusMakerWithIDs(TestNexusMaker):
     @pytest.fixture
     def maker(self, nexusmaker):
-        nexusmaker.data.extend([
-            Record(ID=99, Language="E", Parameter="eye", Item="", Cognacy="", Loan=False),
-            Record(ID='abc', Language="E", Parameter="leg", Item="", Cognacy="", Loan=False),
-        ])
+        nexusmaker.add(Record(ID=99, Language="E", Parameter="eye", Item="", Cognacy="", Loan=False))
+        nexusmaker.add(Record(ID='abc', Language="E", Parameter="leg", Item="", Cognacy="", Loan=False))
         nexusmaker.unique_ids = True
         return nexusmaker
 

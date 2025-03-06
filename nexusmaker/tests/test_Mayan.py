@@ -219,7 +219,7 @@ EXPECTED[('cloud', '6')] = EXPECTED[('cloud', '6')] | EXPECTED[('cloud', '6e')]
 class TestNexusMakerMayan:
     @pytest.fixture
     def maker(self):
-        return NexusMaker(data=COMPLEX_TESTDATA)
+        return NexusMaker(data=COMPLEX_TESTDATA, remove_loans=False)
 
     @pytest.fixture
     def nexus(self, maker):
@@ -286,10 +286,10 @@ class TestNexusMakerMayanAscertained(TestNexusMakerMayan):
 
     @pytest.fixture
     def maker(self):
-        return NexusMakerAscertained(data=COMPLEX_TESTDATA)
+        return NexusMakerAscertained(data=COMPLEX_TESTDATA, remove_loans=False)
 
 
 class TestNexusMakerMayanAscertainedParameters(TestNexusMakerMayanAscertained):
     @pytest.fixture
     def maker(self):
-        return NexusMakerAscertainedParameters(data=COMPLEX_TESTDATA)
+        return NexusMakerAscertainedParameters(data=COMPLEX_TESTDATA, remove_loans=False)

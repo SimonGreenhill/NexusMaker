@@ -30,9 +30,19 @@ maker = NexusMaker(data)
 maker = NexusMakerAscertained(data)  # adds Ascertainment bias character
 
 maker = NexusMakerAscertainedWords(data)  # adds Ascertainment character per word
+
+# generate
 nex = maker.make()
 maker.write(nex, filename="output.nex")
 
+
+# remove combining cognates:
+#    If a language has multiple cognates for a parameter, then this will filter
+#    the cognates to a maximum of `keep`, i.e. if a language has cognate sets
+#    "a, b, c" for the word `hand`, then `keep=2` will leave the top 2 cognates
+#    (="a, b"), while `keep=1` will leave the top cognate set (="a").
+maker = remove_combining_cognates(NexusMaker(data), keep=2)
+nex = maker.make()
 
 ```
 
