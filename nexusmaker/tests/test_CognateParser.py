@@ -226,3 +226,8 @@ def test_trailing_dash():
 def test_semicolon():
     with pytest.warns(UserWarning):
         CognateParser().parse_cognate('2, 63; 87')
+
+
+def test_bad_type():
+    with pytest.raises(ValueError):
+        CognateParser().parse_cognate({'a': '1'})

@@ -17,6 +17,9 @@ def test_simple():
     assert r.Loan == "L"
     assert r.Cognacy is None
     assert r.get_taxon() == 'English_3'
+    
+    assert repr(r).startswith("<Record")
+
 
 
 def test_is_loan():

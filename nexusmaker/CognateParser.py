@@ -45,7 +45,7 @@ class CognateParser(object):
 
     def parse_cognate(self, value, record_id=None):
         raw = value
-        value = str(value) if value is not None else value
+        value = str(value) if isinstance(value, int) else value
         if value is None:
             return self.get_next_unique(record_id)
         elif value == '':
@@ -84,4 +84,4 @@ class CognateParser(object):
                 value = natsort(value)
             return value
         else:
-            raise ValueError("%s" % type(value))
+            raise ValueError("Can't handle %s" % type(value))

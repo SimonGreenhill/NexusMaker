@@ -40,7 +40,7 @@ class Record(object):
                 return False
             else:
                 return True
-        raise ValueError("should not happen: %r" % self.Loan)
+        raise ValueError("should not happen: %r" % self.Loan)  # pragma: no cover
         
     def get_taxon(self):
         if self.Language_ID is None:
@@ -58,9 +58,9 @@ class NexusMaker(object):
     remove_loans = remove loan words (default=True)
     unique_ids = keep record_ids for unique cognates (default=False)
     """
-    def __init__(self, data, cogparser=None, remove_loans=True, unique_ids=False):
+    def __init__(self, data=None, cogparser=None, remove_loans=True, unique_ids=False):
         self.remove_loans = remove_loans
-        
+        data = [] if data is None else data
         self._cognates = None
         self.languages = set()
         self.parameters = set()
@@ -73,7 +73,7 @@ class NexusMaker(object):
         self.unique_ids = unique_ids
 
     def add(self, record):
-        """Checks that all records have the keys we need"""
+        """Adds to record list and checks that we have the values we need"""
         if not isinstance(record, Record):
             raise ValueError("Should be a `Record` instance")
         
@@ -81,17 +81,11 @@ class NexusMaker(object):
         if self.remove_loans and record.is_loan:
             return
         
-        if not hasattr(record, 'Language'):
-            raise ValueError("Record has no `Language` %r" % record)
-        if not hasattr(record, 'Parameter'):
-            raise ValueError("Record has no `Parameter` %r" % record)
-        if not hasattr(record, 'Cognacy'):
-            raise ValueError("Record has no `Cognacy` %r" % record)
         
-        # things that cannot be empty
-        for attr in ('Language', 'Parameter'):
-            if getattr(record, attr, None) is None:
-                raise ValueError("Record.%s cannot be None" % attr)
+        if not hasattr(record, 'Language') or record.Language is None:
+            raise ValueError("Record has no `Language` %r" % record)
+        if not hasattr(record, 'Parameter') or record.Parameter is None:
+            raise ValueError("Record has no `Parameter` %r" % record)
         
         self.languages.add(record.get_taxon())
         self.parameters.add(record.Parameter)
@@ -125,7 +119,7 @@ class NexusMaker(object):
             hascog = set()
 
             for rec in self.data:
-                if self.remove_loans and rec.is_loan:
+                if self.remove_loans and rec.is_loan:  # pragma: no cover
                     #raise ValueError("%r is a loan!" % rec)
                     continue
                 

@@ -6,18 +6,15 @@ from nexusmaker import NexusMaker
 def test_nexusmaker_input():
     with pytest.raises(ValueError):
         NexusMaker(['1'])
-
+    
+    n = NexusMaker()
     # no language
     with pytest.raises(ValueError):
-        NexusMaker([
-            Record(Parameter="leg", Item="", Cognacy="2")
-        ])
+        n.add(Record(Language=None, Parameter="leg", Item="x", Cognacy="2"))
 
     # no parameter
     with pytest.raises(ValueError):
-        NexusMaker([
-            Record(Language="French", Item="", Cognacy="2")
-        ])
+        n.add(Record(Language="French", Parameter=None, Item="x", Cognacy="2"))
 
 
 def test_error_on_make_with_uniques_bigger_than_one(testdata):
