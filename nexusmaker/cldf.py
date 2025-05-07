@@ -3,7 +3,7 @@ from pycldf import Dataset
 from .maker import Record
 
 
-def load_cldf(cldf, table='ValueTable', column='Cognacy'):
+def load_cldf(cldf, table='ValueTable', idcol='ID', column='Cognacy'):
     dataset = Dataset.from_metadata(cldf)
 
     if table not in dataset:  # pragma: no cover
@@ -19,7 +19,7 @@ def load_cldf(cldf, table='ValueTable', column='Cognacy'):
         for e in ('Language_ID', 'Parameter_ID', column):
             assert e in row, 'Missing expected column %s in table %s' % (e, table)
         yield Record(
-            ID=row['ID'],
+            ID=row[idcol],
             Language_ID=row['Language_ID'],
             Language=languages[row['Language_ID']]['Name'],
             Parameter_ID=row['Parameter_ID'],

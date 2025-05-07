@@ -97,6 +97,12 @@ def test_load_cldf(cldf_records):
     assert cldf_records[-1].get_taxon() == 'Tahitian_1636'
 
 
+def test_load_cldf_alternate_id(cldf_metadata):
+    cldf_records = load_cldf(cldf_metadata, idcol='Parameter_ID', table='ValueTable')
+    for o in cldf_records:
+        assert o.ID == o.Parameter_ID
+
+
 class TestNexusMakerCLDF:
     # number of cognate sets expected
     expected_ncog = len(EXPECTED_COGNATES)

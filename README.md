@@ -48,6 +48,7 @@ nex = maker.make()
 
 ### Version History:
 
+* 2.0.6: allow different ID columns in `load_cldf`
 * 2.0.4: add `unique_ids` parameter 
 * 2.0.3: handle CLDF datasets
 * 2.0.2: add tool to filter combining cognates
