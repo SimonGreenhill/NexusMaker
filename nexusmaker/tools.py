@@ -22,7 +22,7 @@ def slugify(var):
     var = var.replace("(", "").replace(")", "")
     var = var.replace(" / ", "_").replace("/", "_")
     var = var.replace(" - ", "_")
-    var = var.replace(":", "").replace('?', "")
+    var = var.replace(":", "").replace('?', "").replace(";", "")
     var = var.replace('’', '').replace("'", "")
     var = var.replace(',', "").replace(".", "")
     var = var.replace(" ", "_")
